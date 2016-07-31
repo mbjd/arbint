@@ -11,9 +11,6 @@ sign_to_int(sign enum_sign)
 		case NEGATIVE:
 			return -1;
 			break;
-		case ZERO:
-			return 0;
-			break;
 		case POSITIVE:
 			return +1;
 			break;
@@ -29,9 +26,6 @@ sign int_to_sign(int int_sign)
 	{
 		case -1:
 			return NEGATIVE;
-			break;
-		case 0:
-			return ZERO;
 			break;
 		case 1:
 			return POSITIVE;

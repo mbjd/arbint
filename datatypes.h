@@ -3,7 +3,7 @@
 
 #include <stddef.h>
 
-typedef enum sign { NEGATIVE, ZERO, POSITIVE } sign;
+typedef enum sign { NEGATIVE, POSITIVE } sign;
 
 /*
  * Basic arbitrary-sized integer data type
@@ -14,8 +14,7 @@ typedef enum sign { NEGATIVE, ZERO, POSITIVE } sign;
  *         can be interpreted as a base 2^64 number where each uint64_t is
  *         a 'digit', or as a continuous, long binary number.
  *
- * sign:   An enum storing the sign that can assume the values NEGATIVE,
- *         ZERO or POSITIVE.
+ * sign:   An enum storing the sign with values NEGATIVE or POSITIVE.
  *
  * length: An integer storing the number of uint64_t's contained in value.
  *         Whenever value is reallocated to make more space, this value must
@@ -23,7 +22,7 @@ typedef enum sign { NEGATIVE, ZERO, POSITIVE } sign;
  */
 typedef struct {
 	uint64_t* value;
-	enum sign sign; // +1, 0, or -1
+	enum sign sign; // POSITIVE or NEGATIVE
 	size_t length; // Number of uint64_t's in value
 } arbint;
 
