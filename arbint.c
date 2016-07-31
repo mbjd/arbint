@@ -5,9 +5,11 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-#include "arbint.h"
 #include "datatypes.h"
 #include "helper-functions.h"
+
+#include "arbint.h"
+
 
 void
 add_binary_to_arbint(arbint bigint, int64_t value, int position)
@@ -30,6 +32,7 @@ add_binary_to_arbint(arbint bigint, int64_t value, int position)
 		add_binary_to_arbint(bigint, carry, position + 1);
 	}
 }
+
 
 void free_arbint_struct(arbint* to_free)
 {
