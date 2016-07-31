@@ -15,7 +15,7 @@
 void
 add_binary_to_arbint(arbint bigint, int64_t value, int position)
 {
-	// Add (value * (2^64) ^ position) to a arbint.
+	// Add (value * (2^64) ^ position) to an arbint.
 
 	uint64_t carry = (uint64_t) addition_will_wrap(bigint.value[position], value);
 	bigint.value[position] += value;
