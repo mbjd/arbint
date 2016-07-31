@@ -2,6 +2,7 @@
 #define TYPE_H
 
 #include <stddef.h>
+#include <stdint.h>
 
 typedef enum sign { NEGATIVE, POSITIVE } sign;
 
