@@ -1,7 +1,11 @@
 #include <stdio.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+#include "minunit.h"
 
 #include "arbint.h"
-#include "minunit.h"
+#include "operators.h"
 
 
 int tests_run = 0;
@@ -39,11 +43,58 @@ static char* test_int_to_sign()
 	return 0;
 }
 
+static char* test_arbint_eq()
+{
+	arbint a;
+	arbint b;
+
+	uint64_t test_array[3] = {1318934184, 121983, 0};
+	a.value = test_array;
+	a.length = 3;
+	a.sign = POSITIVE;
+
+	b.value = test_array;
+	b.length = 3;
+	a.sign = POSITIVE;
+
+	mu_assert("Completely equal arbints aren't equal", arbint_eq(&a, &b) == true);
+
+
+	uint64_t test_array_2[2] = {1318934184, 121983};
+	a.value = test_array_2;
+	a.length = 2;
+
+	mu_assert("Numerically equal arbints with different length aren't equal",\
+	          arbint_eq(&a, &b) == true);
+
+
+	uint64_t zero_array[1] = {0};
+	uint64_t one_array[1] = {1};
+
+	a.value = zero_array;
+	a.length = 1;
+	a.sign = POSITIVE;
+
+	b.value = zero_array;
+	b.length = 1;
+	b.sign = NEGATIVE;
+
+	mu_assert("Arbints = 0 with different sign aren't equal", arbint_eq(&a, &b) == true);
+
+	a.value = one_array;
+	b.value = one_array;
+
+	mu_assert("Arbints = 1 with different sign are equal", arbint_eq(&a, &b) == false);
+
+	return 0;
+}
+
 static char* all_tests()
 {
 	mu_run_test(test_char_to_digit);
 	mu_run_test(test_sign_to_int);
 	mu_run_test(test_int_to_sign);
+	mu_run_test(test_arbint_eq);
 	return 0;
 }
 
