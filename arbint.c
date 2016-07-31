@@ -72,6 +72,10 @@ arbint* str_to_arbint(char* input_str)
 		position -= 1;
 	}
 
-	// TODO ...
+	// TODO finish that function. Right now you have to set the
+	// attributes of each arbint struct manually, which is shit
+
+	// TODO don't return address of local variable (maybe pass
+	// an empty struct as an argument)
 	return &result;
 }
