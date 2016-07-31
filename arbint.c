@@ -6,6 +6,7 @@
 #include <stdint.h>
 
 #include "datatypes.h"
+#include "operators.h"
 #include "helper-functions.h"
 
 #include "arbint.h"
@@ -72,6 +73,5 @@ arbint* str_to_arbint(char* input_str)
 	}
 
 	// TODO ...
-
 	return &result;
 }
