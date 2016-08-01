@@ -9,4 +9,6 @@ enum sign int_to_sign(int int_sign);
 
 int char_to_digit(char c);
 
+void print_arbint(arbint* to_print);
+
 #endif

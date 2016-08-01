@@ -3,6 +3,9 @@
 
 #include "datatypes.h"
 
+#include "helper-functions.h"
+
+
 int
 sign_to_int(sign enum_sign)
 {
@@ -54,4 +57,48 @@ int
 addition_will_wrap(uint64_t a, uint64_t b)
 {
 	return (a + b) < a;
+}
+
+void
+print_arbint(arbint* to_print)
+{
+	// Print a representation of an arbint struct for debugging.
+	printf("{\n");
+	if (to_print == NULL)
+	{
+		// Print unallocated struct
+		printf("\t<null pointer>");
+	}
+	else
+	{
+		// Print length & value
+		if (to_print -> length)
+		{
+			printf("\tlength: %d\n", to_print -> length);
+			printf("\tvalue: [\n");
+			for (int i = 0; i < (to_print -> length); i++)
+			{
+				printf("\t\t%d: %lu\n", i, (to_print -> value)[i]);
+			}
+			printf("\t]\n");
+		}
+		else
+		{
+			printf("\tlength: 0\n");
+		}
+
+		switch (to_print -> sign)
+		{
+			case NEGATIVE:
+				printf("\tsign: NEGATIVE\n");
+				break;
+			case POSITIVE:
+				printf("\tsign: POSITIVE\n");
+				break;
+			default:
+				printf("\tsign: <undefined>\n");
+				break;
+		}
+	}
+	printf("}\n");
 }

@@ -94,11 +94,27 @@ test_arbint_eq()
 }
 
 static char*
+test_print()
+{
+	arbint a;
+
+	uint64_t test_array[3] = {1318934184, 121983, 0};
+	a.length = 3;
+	a.value = test_array;
+	a.sign = POSITIVE;
+
+	print_arbint(&a);
+
+	return 0;
+}
+
+static char*
 all_tests()
 {
 	mu_run_test(test_char_to_digit);
 	mu_run_test(test_sign_to_int);
 	mu_run_test(test_int_to_sign);
+	mu_run_test(test_print);
 	mu_run_test(test_arbint_eq);
 	return 0;
 }
