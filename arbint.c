@@ -35,13 +35,15 @@ add_binary_to_arbint(arbint bigint, int64_t value, int position)
 }
 
 
-void free_arbint_struct(arbint* to_free)
+void
+free_arbint_struct(arbint* to_free)
 {
 	free(to_free -> value);
 	free(to_free);
 }
 
-arbint* str_to_arbint(char* input_str, arbint* to_fill)
+arbint*
+str_to_arbint(char* input_str, arbint* to_fill)
 {
 	// TODO: Trim whitespace
 

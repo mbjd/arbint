@@ -20,7 +20,8 @@ sign_to_int(sign enum_sign)
 	}
 }
 
-sign int_to_sign(int int_sign)
+sign
+int_to_sign(int int_sign)
 {
 	switch (int_sign)
 	{

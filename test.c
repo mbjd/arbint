@@ -10,7 +10,8 @@
 
 int tests_run = 0;
 
-static char* test_char_to_digit()
+static char*
+test_char_to_digit()
 {
 	mu_assert("char_to_digit('0') == 0", char_to_digit('0') == 0);
 	mu_assert("char_to_digit('9') == 9", char_to_digit('9') == 9);
@@ -21,7 +22,8 @@ static char* test_char_to_digit()
 }
 
 
-static char* test_sign_to_int()
+static char*
+test_sign_to_int()
 {
 	int neg = sign_to_int(NEGATIVE);
 	int pos = sign_to_int(POSITIVE);
@@ -32,7 +34,8 @@ static char* test_sign_to_int()
 	return 0;
 }
 
-static char* test_int_to_sign()
+static char*
+test_int_to_sign()
 {
 	sign neg = int_to_sign(-1);
 	sign pos = int_to_sign(1);
@@ -43,7 +46,8 @@ static char* test_int_to_sign()
 	return 0;
 }
 
-static char* test_arbint_eq()
+static char*
+test_arbint_eq()
 {
 	arbint a;
 	arbint b;
@@ -89,7 +93,8 @@ static char* test_arbint_eq()
 	return 0;
 }
 
-static char* all_tests()
+static char*
+all_tests()
 {
 	mu_run_test(test_char_to_digit);
 	mu_run_test(test_sign_to_int);
@@ -98,10 +103,11 @@ static char* all_tests()
 	return 0;
 }
 
-int main(int argc, char **argv) {
-
+int
+main(int argc, char **argv)
+{
 	char *result = all_tests();
-	if (result != 0)
+	if (result != NULL)
 	{
 		printf("%s\n", result);
 	}
