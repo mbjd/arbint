@@ -1,1 +1,8 @@
 run-tests
+obj/*.o
+.deps/*
+include/*.h.gch
+
+*.o
+*.a
+*.so
