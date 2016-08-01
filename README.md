@@ -15,7 +15,6 @@ What it can do is check for equality of two `arbint` structs, and run a bunch of
 
 Feel free to tinker around with it! To see the tests run:
 
-    make test
-    ./run-tests
+	make run-tests
 
 I'm happy to hear about suggestions, issues and ideas.

@@ -27,7 +27,7 @@ print-%:
 
 default: test
 
-run-test: test
+run-tests: test
 	$(test_executable)
 
 # Link all .o files together with test.o to make a test executable
