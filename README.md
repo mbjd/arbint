@@ -17,4 +17,5 @@ Feel free to tinker around with it! To see the tests run:
 
     make test
     ./run-tests
-​I'm happy to hear about suggestions, issues and ideas.
+
+I'm happy to hear about suggestions, issues and ideas.
