@@ -41,7 +41,7 @@ void free_arbint_struct(arbint* to_free)
 	free(to_free);
 }
 
-arbint* str_to_arbint(char* input_str)
+arbint* str_to_arbint(char* input_str, arbint* to_fill)
 {
 	// TODO: Trim whitespace
 
@@ -77,5 +77,5 @@ arbint* str_to_arbint(char* input_str)
 
 	// TODO don't return address of local variable (maybe pass
 	// an empty struct as an argument)
-	return &result;
+	return to_fill;
 }
