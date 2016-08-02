@@ -48,17 +48,19 @@ test_int_to_sign()
 static char*
 test_arbint_eq()
 {
-	arbint a;
-	arbint b;
-
 	uint64_t test_array[3] = {1318934184, 121983, 0};
-	a.value = test_array;
-	a.length = 3;
-	a.sign = POSITIVE;
 
-	b.value = test_array;
-	b.length = 3;
-	b.sign = POSITIVE;
+	arbint a = {
+		.value = test_array,
+		.length = 3,
+		.sign = POSITIVE
+	};
+
+	arbint b = {
+		.value = test_array,
+		.length = 3,
+		.sign = POSITIVE
+	};
 
 	mu_assert("Completely equal arbints aren't equal", arbint_eq(&a, &b) == true);
 
