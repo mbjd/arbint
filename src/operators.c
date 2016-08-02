@@ -13,8 +13,12 @@ arbint_eq_up_to_length(arbint* a, arbint* b, size_t length)
 	// This function assumes that both a and b have at least the given length.
 	// It is intended to be called from arbint_eq, which does the necessary checking.
 	for (int i = 0; i < length; i++)
+	{
 		if (a->value[i] != b->value[i])
+		{
 			return false;
+		}
+	}
 	return true;
 }
 
@@ -25,9 +29,10 @@ arbint_is_zero(arbint* a)
 	for (int i = 0; i < length; i++)
 	{
 		if (a->value[i])
+		{
 			return false;
+		}
 	}
-
 	return true;
 }
 
@@ -62,7 +67,6 @@ arbint_eq(arbint* a, arbint* b)
 			return false;
 	}
 	// TODO find out if there's more we can say based on signs and zeroness
-
 
 
 	// If they have a different length
@@ -102,10 +106,13 @@ arbint_eq(arbint* a, arbint* b)
 		// the longer number. If they are just zeroes, the numbers are indeed
 		// equal, otherwise not (because the non-existent values in the shorter
 		// arbint are implicitly zero)
-
 		for (int i = shorter_length; i < longer_length; i++)
+		{
 			if (longer->value[i])
+			{
 				return false;
+			}
+		}
 
 		// At this point we've checked all digits and they either match, or
 		// are zero in one number and don't exist in the other one.

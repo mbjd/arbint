@@ -4,7 +4,10 @@
 #include <stddef.h>
 #include <stdint.h>
 
-typedef enum sign { NEGATIVE, POSITIVE } sign;
+typedef enum sign {
+	NEGATIVE = 0,
+	POSITIVE = 1,
+} sign;
 
 /*
  * Basic arbitrary-sized integer data type

@@ -21,7 +21,6 @@ test_char_to_digit()
 	return 0;
 }
 
-
 static char*
 test_sign_to_int()
 {
