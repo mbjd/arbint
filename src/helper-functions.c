@@ -63,42 +63,46 @@ void
 print_arbint(arbint* to_print)
 {
 	// Print a representation of an arbint struct for debugging.
-	printf("{\n");
+
+	// If it's a null pointer we don't have much to do
+	if (to_print == NULL)
+	{
+		printf("arbint a = NULL;\n");
+		return;
+	}
+
+	// First we declare the value array
+	printf("uint64_t value_array[%d] = {", to_print->length);
+	for (int i = 0; i < (to_print -> length); i++)
+	{
+		printf("%lu%s", (to_print->value)[i], i+1 == to_print->length ? "" : ", ");
+	}
+	printf("};\n");
+	printf("arbint a = ");
 	if (to_print == NULL)
 	{
 		// Print unallocated struct
-		printf("\t<null pointer>");
+		printf("NULL;\n");
 	}
 	else
 	{
 		// Print length & value
-		if (to_print -> length)
-		{
-			printf("\tlength: %d\n", to_print -> length);
-			printf("\tvalue: [\n");
-			for (int i = 0; i < (to_print -> length); i++)
-			{
-				printf("\t\t%d: %lu\n", i, (to_print -> value)[i]);
-			}
-			printf("\t]\n");
-		}
-		else
-		{
-			printf("\tlength: 0\n");
-		}
+		printf("{\n\t.value = value_array,\n");
+		printf("\t.length = %d,\n", to_print -> length);
 
+		char* sign_fmt_str = "\t.sign = %s,\n";
 		switch (to_print -> sign)
 		{
 			case NEGATIVE:
-				printf("\tsign: NEGATIVE\n");
+				printf(sign_fmt_str, "NEGATIVE");
 				break;
 			case POSITIVE:
-				printf("\tsign: POSITIVE\n");
+				printf(sign_fmt_str, "POSITIVE");
 				break;
 			default:
-				printf("\tsign: <undefined>\n");
+				printf(sign_fmt_str, "<undefined>");
 				break;
 		}
 	}
-	printf("}\n");
+	printf("};\n");
 }

@@ -95,12 +95,17 @@ test_arbint_eq()
 static char*
 test_print()
 {
-	arbint a;
+	printf("\n%s",
+			"// This test would be a bit tricky to control automatically,\n"
+			"// so it has to be checked visually right now. This bit\n"
+			"// should be a valid C snippet declaring an arbint struct.\n");
 
-	uint64_t test_array[3] = {1318934184, 121983, 0};
-	a.length = 3;
-	a.value = test_array;
-	a.sign = POSITIVE;
+	uint64_t value_array[3] = {1318934184, 121983, 0};
+	arbint a = {
+		.value = value_array,
+		.length = 3,
+		.sign = POSITIVE
+	};
 
 	print_arbint(&a);
 
