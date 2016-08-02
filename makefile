@@ -5,10 +5,14 @@ object_dir = obj
 test_dir = test
 
 
-test_executable = $(test_dir)/run-tests
+test_executable = run-tests
 
 CC = gcc
 CFLAGS = --std=c99 --pedantic -I $(include_dir)
+
+# Dependency tracking
+# CFLAGS += -MMD
+# -include *.d
 
 # List all .c files in the source directory
 SRCS = $(wildcard $(source_dir)/*.c)
@@ -16,8 +20,8 @@ SRCS = $(wildcard $(source_dir)/*.c)
 BASICS = $(include_dir)/datatypes.h
 
 # For each one, there should be a corresponding .o file in the object directory
-SRCS_basename = $(SRCS:src/%=%) # Remove the 'src/' (targets are named %.o, not obj/%.o)
-OBJS = $(SRCS_basename:%.c=%.o) # Replace .c by .o
+SRCS_stripped = $(basename $(notdir $(SRCS))) # src/%.c -> %
+OBJS = $(addsuffix .o,$(addprefix $(object_dir)/,$(SRCS_stripped)))
 
 HEADERS = $(wildcard $(include_dir)/*.h)
 
@@ -25,24 +29,27 @@ HEADERS = $(wildcard $(include_dir)/*.h)
 print-%:
 	@echo $*=$($*)
 
-default: test
+default: run-tests
 
+.PHONY: run-tests
 run-tests: test
-	$(test_executable)
+	./$(test_executable)
 
 # Link all .o files together with test.o to make a test executable
-test: test.o $(OBJS)
-	$(CC) $(CFLAGS) -o $(test_executable) $(object_dir)/$< $(OBJS:%=$(object_dir)/%)
+.PHONY: test
+test: $(object_dir)/test.o $(OBJS)
+	$(CC) $(CFLAGS) -o $(test_executable) $< $(OBJS)
 
 # Put an object file of test/test.c in obj/test.o
-test.o: $(test_dir)/test.c $(test_dir)/minunit.h $(HEADERS)
-	$(CC) $(CFLAGS) -I $(test_dir) -c $< -o $(object_dir)/$@
+$(object_dir)/test.o: $(test_dir)/test.c $(test_dir)/minunit.h $(HEADERS)
+	$(CC) $(CFLAGS) -I $(test_dir) -c $< -o $@
 
 # All obj files except test.o are formed from from the corresponding .c and .h file.
 # To be sure we have all headers as prerequisites, which isn't really necessary but
 # actually detecting the minimal necessary prerequisites would be more hassle.
-%.o: $(source_dir)/%.c $(HEADERS)
-	$(CC) $(CFLAGS) -c $< -o $(object_dir)/$@
+.PHONY: $(object_dir)/%.o
+$(object_dir)/%.o: $(source_dir)/%.c $(HEADERS)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 
 .PHONY: clean
