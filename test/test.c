@@ -59,7 +59,7 @@ test_arbint_eq()
 
 	b.value = test_array;
 	b.length = 3;
-	a.sign = POSITIVE;
+	b.sign = POSITIVE;
 
 	mu_assert("Completely equal arbints aren't equal", arbint_eq(&a, &b) == true);
 
