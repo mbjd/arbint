@@ -8,7 +8,7 @@ test_dir = test
 test_executable = run-tests
 
 CC = gcc
-CFLAGS = --std=c99 --pedantic -I $(include_dir)
+CFLAGS = --std=c99 -Wall -Wextra --pedantic -I $(include_dir)
 
 # Dependency tracking
 # CFLAGS += -MMD
@@ -26,6 +26,7 @@ OBJS = $(addsuffix .o,$(addprefix $(object_dir)/,$(SRCS_stripped)))
 HEADERS = $(wildcard $(include_dir)/*.h)
 
 # Print a variable by runnig 'make print-varname'
+.PHONY: print-%
 print-%:
 	@echo $*=$($*)
 
