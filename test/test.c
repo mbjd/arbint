@@ -48,16 +48,17 @@ test_int_to_sign()
 static char*
 test_arbint_eq()
 {
-	uint64_t test_array[3] = {1318934184, 121983, 0};
+	uint64_t test_array_a[3] = {1318934184, 121983, 0};
+	uint64_t test_array_b[3] = {1318934184, 121983, 0};
 
 	arbint a = {
-		.value = test_array,
+		.value = test_array_a,
 		.length = 3,
 		.sign = POSITIVE
 	};
 
 	arbint b = {
-		.value = test_array,
+		.value = test_array_b,
 		.length = 3,
 		.sign = POSITIVE
 	};
