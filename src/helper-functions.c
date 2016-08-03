@@ -72,10 +72,10 @@ print_arbint(arbint* to_print)
 	}
 
 	// First we declare the value array
-	printf("uint64_t value_array[%d] = {", to_print->length);
-	for (int i = 0; i < (to_print -> length); i++)
+	printf("uint64_t value_array[%lu] = {", to_print->length);
+	for (size_t i = 0; i < (to_print -> length); i++)
 	{
-		printf("%lu%s", (to_print->value)[i], i+1 == to_print->length ? "" : ", ");
+		printf("%llu%s", (to_print->value)[i], i+1 == to_print->length ? "" : ", ");
 	}
 	printf("};\n");
 	printf("arbint a = ");
@@ -88,7 +88,7 @@ print_arbint(arbint* to_print)
 	{
 		// Print length & value
 		printf("{\n\t.value = value_array,\n");
-		printf("\t.length = %d,\n", to_print -> length);
+		printf("\t.length = %lu,\n", to_print -> length);
 
 		char* sign_fmt_str = "\t.sign = %s,\n";
 		switch (to_print -> sign)

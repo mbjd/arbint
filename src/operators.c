@@ -7,12 +7,12 @@
 #include "operators.h"
 
 
-bool
+static bool
 arbint_eq_up_to_length(arbint* a, arbint* b, size_t length)
 {
 	// This function assumes that both a and b have at least the given length.
 	// It is intended to be called from arbint_eq, which does the necessary checking.
-	for (int i = 0; i < length; i++)
+	for (size_t i = 0; i < length; i++)
 	{
 		if (a->value[i] != b->value[i])
 		{
@@ -22,11 +22,11 @@ arbint_eq_up_to_length(arbint* a, arbint* b, size_t length)
 	return true;
 }
 
-bool
+static bool
 arbint_is_zero(arbint* a)
 {
 	size_t length = a -> length;
-	for (int i = 0; i < length; i++)
+	for (size_t i = 0; i < length; i++)
 	{
 		if (a->value[i])
 		{
@@ -106,7 +106,7 @@ arbint_eq(arbint* a, arbint* b)
 		// the longer number. If they are just zeroes, the numbers are indeed
 		// equal, otherwise not (because the non-existent values in the shorter
 		// arbint are implicitly zero)
-		for (int i = shorter_length; i < longer_length; i++)
+		for (size_t i = shorter_length; i < longer_length; i++)
 		{
 			if (longer->value[i])
 			{

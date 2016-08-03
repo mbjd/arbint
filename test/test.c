@@ -126,7 +126,7 @@ all_tests()
 }
 
 int
-main(int argc, char **argv)
+main()
 {
 	char *result = all_tests();
 	if (result != NULL)

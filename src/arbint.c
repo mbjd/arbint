@@ -48,24 +48,26 @@ str_to_arbint(char* input_str, arbint* to_fill)
 	// TODO: Trim whitespace
 
 	// Get the sign
-	int sign = 1;
+	// All commented out so no warnings pop up while this is under construction
+	// int sign = 1;
 	if (input_str[0] == '-')
 	{
-		sign = -1;
+		// sign = -1;
 		input_str++;
 	}
 
 	int position = strlen(input_str) - 1;
-	int digit_value = 1;
-	int digit = 0;
-	int base = 10; // TODO maybe accept other bases too?
-	arbint result;
+	// int digit_value = 1;
+	// int digit = 0;
+	// int base = 10; // TODO maybe accept other bases too?
+	// arbint result;
 
 	// Get the fucking value already you lazy ass function
 	while (position)
 	{
-		digit = char_to_digit(input_str[position]);
-		if (digit == -1)
+		// digit = char_to_digit(input_str[position]);
+		// if (digit == -1)
+		if (0)
 		{
 			fprintf(stderr, "str_to_arbint: The input string contains an "
 			        "invalid character: '%c'", input_str[position]);
