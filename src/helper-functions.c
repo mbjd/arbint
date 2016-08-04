@@ -78,31 +78,25 @@ print_arbint(arbint* to_print)
 		printf("%llu%s", (to_print->value)[i], i+1 == to_print->length ? "" : ", ");
 	}
 	printf("};\n");
-	printf("arbint a = ");
-	if (to_print == NULL)
-	{
-		// Print unallocated struct
-		printf("NULL;\n");
-	}
-	else
-	{
-		// Print length & value
-		printf("{\n\t.value = value_array,\n");
-		printf("\t.length = %lu,\n", to_print -> length);
 
-		char* sign_fmt_str = "\t.sign = %s,\n";
-		switch (to_print -> sign)
-		{
-			case NEGATIVE:
-				printf(sign_fmt_str, "NEGATIVE");
-				break;
-			case POSITIVE:
-				printf(sign_fmt_str, "POSITIVE");
-				break;
-			default:
-				printf(sign_fmt_str, "<undefined>");
-				break;
-		}
+	// Print length & value
+	printf("arbint a = {\n");
+	printf("\t.value = value_array,\n");
+	printf("\t.length = %lu,\n", to_print -> length);
+
+	// Print the sign
+	char* sign_fmt_str = "\t.sign = %s,\n";
+	switch (to_print -> sign)
+	{
+		case NEGATIVE:
+			printf(sign_fmt_str, "NEGATIVE");
+			break;
+		case POSITIVE:
+			printf(sign_fmt_str, "POSITIVE");
+			break;
+		default:
+			printf(sign_fmt_str, "<undefined>");
+			break;
 	}
 	printf("};\n");
 }
