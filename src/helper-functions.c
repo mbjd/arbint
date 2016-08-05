@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -53,7 +54,13 @@ char_to_digit(char c)
 	}
 }
 
-int
+bool
+is_digit(const char c)
+{
+	return (c >= '0') && (c <= '9');
+}
+
+bool
 addition_will_wrap(uint64_t a, uint64_t b)
 {
 	return (a + b) < a;
