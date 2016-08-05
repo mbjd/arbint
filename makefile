@@ -8,7 +8,7 @@ test_dir = test
 test_executable = run-tests
 
 CC = gcc
-CFLAGS = --std=c99 -Wall -Wextra --pedantic -I $(include_dir)
+CFLAGS = -std=c99 -Wall -Wextra -pedantic -I $(include_dir)
 
 # Dependency tracking
 # CFLAGS += -MMD
