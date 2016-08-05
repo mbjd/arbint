@@ -12,13 +12,13 @@
 #include "arbint.h"
 
 
-void
-add_binary_to_arbint(arbint bigint, int64_t value, int position)
+static void
+add_binary_to_arbint(arbint* bigint, uint64_t value, uint64_t position)
 {
 	// Add (value * (2^64) ^ position) to an arbint.
 
-	uint64_t carry = (uint64_t) addition_will_wrap(bigint.value[position], value);
-	bigint.value[position] += value;
+	uint64_t carry = (uint64_t) addition_will_wrap(bigint -> value[position], value);
+	bigint -> value[position] += value;
 
 	if (carry)
 	{
@@ -33,7 +33,6 @@ add_binary_to_arbint(arbint bigint, int64_t value, int position)
 		add_binary_to_arbint(bigint, carry, position + 1);
 	}
 }
-
 
 void
 free_arbint_struct(arbint* to_free)
@@ -56,27 +55,30 @@ str_to_arbint(char* input_str, arbint* to_fill)
 		input_str++;
 	}
 
-	int position = strlen(input_str) - 1;
-	// int digit_value = 1;
-	// int digit = 0;
-	// int base = 10; // TODO maybe accept other bases too?
-	// arbint result;
+	int input_length = strlen(input_str);
 
-	// Get the fucking value already you lazy ass function
-	while (position)
+	// Make sure we only have numbers in the string
+	size_t pos = 0;
+	while (input_str[pos] != '\0')
 	{
-		// digit = char_to_digit(input_str[position]);
-		// if (digit == -1)
-		if (0)
+		if (!is_digit(input_str[pos]))
 		{
-			fprintf(stderr, "str_to_arbint: The input string contains an "
-			        "invalid character: '%c'", input_str[position]);
+			fprintf(stderr, "The input string contains non-numeric characters.");
 			exit(1);
 		}
-		position -= 1;
+		pos++;
 	}
 
-	// TODO finish that function. Right now you have to set the
+	// Convert to arbint
+	// If a = log10(input), the length of the number in base 2^64 will
+	// be a / (log10(2^64)) = a / (log10(2) * 64) = a / 19.265
+	size_t arbint_length = 2 + (((double) input_length) / 19.265);
+
+	// Allocate that amount of space
+	to_fill -> value = calloc(arbint_length, sizeof(uint64_t));
+
+
+	// TODO finish this function. Right now you have to set the
 	// attributes of each arbint struct manually, which is shit
 
 	// TODO don't return address of local variable (maybe pass
