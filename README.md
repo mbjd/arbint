@@ -11,7 +11,7 @@ What it can do is check for equality of two `arbint` structs, and run a bunch of
 
 - Construct `arbint` structs from strings or integers
 - Implement basic math functions with `arbint` structs and 'normal' numbers
-- Add some structure to the project
+
 
 Feel free to tinker around with it! To see the tests run:
 
