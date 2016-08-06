@@ -1,5 +1,4 @@
-#ifndef HELPER_H
-#define HELPER_H
+#pragma once
 
 #include <stdbool.h>
 
@@ -16,5 +15,3 @@ bool is_digit(const char c);
 bool addition_will_wrap(uint64_t a, uint64_t b);
 
 void print_arbint(arbint* to_print);
-
-#endif

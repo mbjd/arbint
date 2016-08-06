@@ -1,5 +1,4 @@
-#ifndef TYPE_H
-#define TYPE_H
+#pragma once
 
 #include <stddef.h>
 #include <stdint.h>
@@ -30,5 +29,3 @@ typedef struct
 	enum sign sign; // POSITIVE or NEGATIVE
 	size_t length;  // Number of uint64_t's in value
 } arbint;
-
-#endif
