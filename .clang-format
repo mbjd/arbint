@@ -1,0 +1,28 @@
+# C = C++ for clang-format
+# http://llvm.org/releases/3.6.0/tools/clang/docs/ClangFormatStyleOptions.html
+
+Language: Cpp
+
+SortIncludes: true
+
+BreakBeforeBraces: Allman
+AlwaysBreakAfterDefinitionReturnType: true
+
+DerivePointerAlignment: false
+PointerAlignment: Left
+
+AlignTrailingComments: true
+ReflowComments: true
+
+AlignOperands: true
+BinPackArguments: false
+BinPackParameters: false
+SpaceAfterCStyleCast: true
+AlignEscapedNewlinesLeft: true
+
+ColumnLimit: 80
+
+UseTab: Always
+TabWidth: 4
+IndentWidth: 4
+IndentCaseLabels: true

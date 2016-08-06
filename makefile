@@ -52,6 +52,12 @@ $(object_dir)/test.o: $(test_dir)/test.c $(test_dir)/minunit.h $(HEADERS)
 $(object_dir)/%.o: $(source_dir)/%.c $(HEADERS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
+# Format all .c and .h files
+.PHONY: pretty
+pretty:
+	find . -name '*.c' -exec clang-format -i {} \;
+	find . -name '*.h' -exec clang-format -i {} \;
+
 
 .PHONY: clean
 clean:
