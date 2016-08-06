@@ -15,15 +15,15 @@ CFLAGS = -std=c99 -Wall -Wextra -pedantic -I $(include_dir)
 # -include *.d
 
 # List all .c files in the source directory
-SRCS = $(wildcard $(source_dir)/*.c)
+SRCS := $(wildcard $(source_dir)/*.c)
 
 BASICS = $(include_dir)/datatypes.h
 
 # For each one, there should be a corresponding .o file in the object directory
-SRCS_stripped = $(basename $(notdir $(SRCS))) # src/%.c -> %
-OBJS = $(addsuffix .o,$(addprefix $(object_dir)/,$(SRCS_stripped)))
+SRCS_stripped := $(basename $(notdir $(SRCS))) # src/%.c -> %
+OBJS := $(addsuffix .o,$(addprefix $(object_dir)/,$(SRCS_stripped)))
 
-HEADERS = $(wildcard $(include_dir)/*.h)
+HEADERS := $(wildcard $(include_dir)/*.h)
 
 # Print a variable by runnig 'make print-varname'
 .PHONY: print-%
