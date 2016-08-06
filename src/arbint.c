@@ -44,13 +44,21 @@ free_arbint_struct(arbint* to_free)
 arbint*
 str_to_arbint(char* input_str, arbint* to_fill)
 {
+	if (to_fill == NULL)
+	{
+		fprintf(stderr,
+			   "str_to_arbint: The passed struct must be initialised\n");
+		exit(ENOMEM); // 12 Cannot allocate memory
+	}
+
 	// TODO: Trim whitespace
 
 	// Get the sign
-	int sign = 1;
+	// Now we can be sure that to_fill points to something
+	to_fill->sign = POSITIVE;
 	if (input_str[0] == '-')
 	{
-		sign = -1;
+		to_fill->sign = NEGATIVE;
 		input_str++;
 	}
 
