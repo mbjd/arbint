@@ -82,8 +82,8 @@ print_arbint(arbint* to_print)
 	for (size_t i = 0; i < (to_print->length); i++)
 	{
 		printf("%llu%s",
-			   (to_print->value)[i],
-			   i + 1 == to_print->length ? "" : ", ");
+		       (to_print->value)[i],
+		       i + 1 == to_print->length ? "" : ", ");
 	}
 	printf("};\n");
 

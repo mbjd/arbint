@@ -78,23 +78,23 @@ arbint_eq(arbint* a, arbint* b)
 		if (a->length < b->length)
 		{
 			shorter = a;
-			longer = b;
+			longer  = b;
 		}
 		else
 		{
 			shorter = b;
-			longer = a;
+			longer  = a;
 		}
 
 		size_t shorter_length = shorter->length;
-		size_t longer_length = longer->length;
+		size_t longer_length  = longer->length;
 
 		assert(shorter_length < longer_length);
 
 		// See if we can already spot a difference in the 'digits' that are
 		// present in both numbers.
 		bool tmp_result =
-			arbint_eq_up_to_length(shorter, longer, shorter_length);
+		    arbint_eq_up_to_length(shorter, longer, shorter_length);
 
 		if (!tmp_result)
 		{

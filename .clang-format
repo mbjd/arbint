@@ -12,6 +12,7 @@ DerivePointerAlignment: false
 PointerAlignment: Left
 
 AlignTrailingComments: true
+AlignConsecutiveAssignments: true
 ReflowComments: true
 
 AlignOperands: true
@@ -22,7 +23,7 @@ AlignEscapedNewlinesLeft: true
 
 ColumnLimit: 80
 
-UseTab: Always
+UseTab: ForIndentation
 TabWidth: 4
 IndentWidth: 4
 IndentCaseLabels: true

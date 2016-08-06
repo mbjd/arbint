@@ -51,38 +51,38 @@ test_arbint_eq()
 	uint64_t test_array_b[3] = {1318934184, 121983, 0};
 
 	arbint a = {.value = test_array_a, .length = 3, .sign = POSITIVE};
-
 	arbint b = {.value = test_array_b, .length = 3, .sign = POSITIVE};
 
 	mu_assert("Completely equal arbints aren't equal",
-			  arbint_eq(&a, &b) == true);
+	          arbint_eq(&a, &b) == true);
 
 	uint64_t test_array_2[2] = {1318934184, 121983};
-	a.value = test_array_2;
+
+	a.value  = test_array_2;
 	a.length = 2;
 
 	mu_assert("Numerically equal arbints with different length aren't equal",
-			  arbint_eq(&a, &b) == true);
+	          arbint_eq(&a, &b) == true);
 
 	uint64_t zero_array[1] = {0};
-	uint64_t one_array[1] = {1};
+	uint64_t one_array[1]  = {1};
 
-	a.value = zero_array;
+	a.value  = zero_array;
 	a.length = 1;
-	a.sign = POSITIVE;
+	a.sign   = POSITIVE;
 
-	b.value = zero_array;
+	b.value  = zero_array;
 	b.length = 1;
-	b.sign = NEGATIVE;
+	b.sign   = NEGATIVE;
 
 	mu_assert("Arbints = 0 with different sign aren't equal",
-			  arbint_eq(&a, &b) == true);
+	          arbint_eq(&a, &b) == true);
 
 	a.value = one_array;
 	b.value = one_array;
 
 	mu_assert("Arbints = 1 with different sign are equal",
-			  arbint_eq(&a, &b) == false);
+	          arbint_eq(&a, &b) == false);
 
 	return 0;
 }
@@ -91,9 +91,9 @@ static char*
 test_print()
 {
 	printf("\n%s",
-		   "// This test would be a bit tricky to control automatically,\n"
-		   "// so it has to be checked visually right now. This bit\n"
-		   "// should be a valid C snippet declaring an arbint struct.\n");
+	       "// This test would be a bit tricky to control automatically,\n"
+	       "// so it has to be checked visually right now. This bit\n"
+	       "// should be a valid C snippet declaring an arbint struct.\n");
 
 	uint64_t value_array[3] = {1318934184, 121983, 0};
 	arbint a = {.value = value_array, .length = 3, .sign = POSITIVE};

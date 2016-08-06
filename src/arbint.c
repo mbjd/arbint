@@ -17,7 +17,7 @@ add_binary_to_arbint(arbint* bigint, uint64_t value, uint64_t position)
 	// Add (value * (2^64) ^ position) to an arbint.
 
 	uint64_t carry =
-		(uint64_t) addition_will_wrap(bigint->value[position], value);
+	    (uint64_t) addition_will_wrap(bigint->value[position], value);
 	bigint->value[position] += value;
 
 	if (carry)
@@ -47,7 +47,7 @@ str_to_arbint(char* input_str, arbint* to_fill)
 	if (to_fill == NULL)
 	{
 		fprintf(stderr,
-			   "str_to_arbint: The passed struct must be initialised\n");
+		        "str_to_arbint: The passed struct must be initialised\n");
 		exit(ENOMEM); // 12 Cannot allocate memory
 	}
 
@@ -71,7 +71,7 @@ str_to_arbint(char* input_str, arbint* to_fill)
 		if (!is_digit(input_str[pos]))
 		{
 			fprintf(stderr,
-					"The input string contains non-numeric characters.");
+			        "The input string contains non-numeric characters.");
 			exit(1);
 		}
 		pos++;
