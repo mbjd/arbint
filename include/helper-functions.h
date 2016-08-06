@@ -1,6 +1,8 @@
 #ifndef HELPER_H
 #define HELPER_H
 
+#include <stdbool.h>
+
 #include "datatypes.h"
 
 int sign_to_int(sign enum_sign);

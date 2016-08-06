@@ -1,11 +1,10 @@
 #include <stdbool.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "datatypes.h"
 
 #include "helper-functions.h"
-
 
 int
 sign_to_int(sign enum_sign)
@@ -80,20 +79,22 @@ print_arbint(arbint* to_print)
 
 	// First we declare the value array
 	printf("uint64_t value_array[%lu] = {", to_print->length);
-	for (size_t i = 0; i < (to_print -> length); i++)
+	for (size_t i = 0; i < (to_print->length); i++)
 	{
-		printf("%llu%s", (to_print->value)[i], i+1 == to_print->length ? "" : ", ");
+		printf("%llu%s",
+			   (to_print->value)[i],
+			   i + 1 == to_print->length ? "" : ", ");
 	}
 	printf("};\n");
 
 	// Print length & value
 	printf("arbint a = {\n");
 	printf("\t.value = value_array,\n");
-	printf("\t.length = %lu,\n", to_print -> length);
+	printf("\t.length = %lu,\n", to_print->length);
 
 	// Print the sign
 	char* sign_fmt_str = "\t.sign = %s,\n";
-	switch (to_print -> sign)
+	switch (to_print->sign)
 	{
 		case NEGATIVE:
 			printf(sign_fmt_str, "NEGATIVE");

@@ -24,10 +24,11 @@ typedef enum sign {
  *         Whenever value is reallocated to make more space, this value must
  *         be updated with the new size.
  */
-typedef struct {
+typedef struct
+{
 	uint64_t* value;
 	enum sign sign; // POSITIVE or NEGATIVE
-	size_t length; // Number of uint64_t's in value
+	size_t length;  // Number of uint64_t's in value
 } arbint;
 
 #endif

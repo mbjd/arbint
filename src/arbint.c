@@ -1,35 +1,35 @@
-#include <stdio.h>
 #include <errno.h>
 #include <limits.h>
-#include <string.h>
-#include <stdlib.h>
 #include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "datatypes.h"
-#include "operators.h"
 #include "helper-functions.h"
+#include "operators.h"
 
 #include "arbint.h"
-
 
 static void
 add_binary_to_arbint(arbint* bigint, uint64_t value, uint64_t position)
 {
 	// Add (value * (2^64) ^ position) to an arbint.
 
-	uint64_t carry = (uint64_t) addition_will_wrap(bigint -> value[position], value);
-	bigint -> value[position] += value;
+	uint64_t carry =
+		(uint64_t) addition_will_wrap(bigint->value[position], value);
+	bigint->value[position] += value;
 
 	if (carry)
 	{
-		// We have to do this recursively because when the following operation is done:
+		// We have to do this recursively because when this is done:
 		//   0000 1111 1111 (imagine those 4-bit ints were 64 bit)
 		// + 0000 0000 0001
 		// = 0001 0000 0000
-		// then adding the carry to value[position+1] will itself cause an overflow,
-		// which has to be carried over another time
-		// TODO in order for this to work, we have to make sure the most significant
-		// number in bigint.value is always 0
+		// then adding the carry to value[position+1] will itself cause an
+		// overflow, which has to be carried over another time
+		// TODO in order for this to work, we have to make sure the most
+		// significant number in bigint.value is always 0
 		add_binary_to_arbint(bigint, carry, position + 1);
 	}
 }
@@ -37,7 +37,7 @@ add_binary_to_arbint(arbint* bigint, uint64_t value, uint64_t position)
 void
 free_arbint_struct(arbint* to_free)
 {
-	free(to_free -> value);
+	free(to_free->value);
 	free(to_free);
 }
 
@@ -47,11 +47,10 @@ str_to_arbint(char* input_str, arbint* to_fill)
 	// TODO: Trim whitespace
 
 	// Get the sign
-	// All commented out so no warnings pop up while this is under construction
-	// int sign = 1;
+	int sign = 1;
 	if (input_str[0] == '-')
 	{
-		// sign = -1;
+		sign = -1;
 		input_str++;
 	}
 
@@ -63,7 +62,8 @@ str_to_arbint(char* input_str, arbint* to_fill)
 	{
 		if (!is_digit(input_str[pos]))
 		{
-			fprintf(stderr, "The input string contains non-numeric characters.");
+			fprintf(stderr,
+					"The input string contains non-numeric characters.");
 			exit(1);
 		}
 		pos++;
@@ -75,8 +75,7 @@ str_to_arbint(char* input_str, arbint* to_fill)
 	size_t arbint_length = 2 + (((double) input_length) / 19.265);
 
 	// Allocate that amount of space
-	to_fill -> value = calloc(arbint_length, sizeof(uint64_t));
-
+	to_fill->value = calloc(arbint_length, sizeof(uint64_t));
 
 	// TODO finish this function. Right now you have to set the
 	// attributes of each arbint struct manually, which is shit

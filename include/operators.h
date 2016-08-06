@@ -1,8 +1,8 @@
 #ifndef OPERATORS_H
 #define OPERATORS_H
 
-#include <stddef.h>
 #include <stdbool.h>
+#include <stddef.h>
 
 #include "datatypes.h"
 

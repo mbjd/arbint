@@ -1,17 +1,17 @@
-#include <stddef.h>
 #include <assert.h>
 #include <stdbool.h>
+#include <stddef.h>
 
 #include "datatypes.h"
 
 #include "operators.h"
 
-
 static bool
 arbint_eq_up_to_length(arbint* a, arbint* b, size_t length)
 {
 	// This function assumes that both a and b have at least the given length.
-	// It is intended to be called from arbint_eq, which does the necessary checking.
+	// It is intended to be called from arbint_eq, which does the necessary
+	// checking.
 	for (size_t i = 0; i < length; i++)
 	{
 		if (a->value[i] != b->value[i])
@@ -25,7 +25,7 @@ arbint_eq_up_to_length(arbint* a, arbint* b, size_t length)
 static bool
 arbint_is_zero(arbint* a)
 {
-	size_t length = a -> length;
+	size_t length = a->length;
 	for (size_t i = 0; i < length; i++)
 	{
 		if (a->value[i])
@@ -68,7 +68,6 @@ arbint_eq(arbint* a, arbint* b)
 	}
 	// TODO find out if there's more we can say based on signs and zeroness
 
-
 	// If they have a different length
 	if (a->length != b->length)
 	{
@@ -94,7 +93,8 @@ arbint_eq(arbint* a, arbint* b)
 
 		// See if we can already spot a difference in the 'digits' that are
 		// present in both numbers.
-		bool tmp_result = arbint_eq_up_to_length(shorter, longer, shorter_length);
+		bool tmp_result =
+			arbint_eq_up_to_length(shorter, longer, shorter_length);
 
 		if (!tmp_result)
 		{
@@ -117,7 +117,6 @@ arbint_eq(arbint* a, arbint* b)
 		// At this point we've checked all digits and they either match, or
 		// are zero in one number and don't exist in the other one.
 		return true;
-
 	}
 	else
 	{
@@ -126,4 +125,3 @@ arbint_eq(arbint* a, arbint* b)
 		return arbint_eq_up_to_length(a, b, a->length);
 	}
 }
-
