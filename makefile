@@ -1,10 +1,9 @@
-
 source_dir = src
 include_dir = include
 object_dir = obj
 test_dir = test
 
-
+so_name = libarbint.so
 test_executable = run-tests
 
 CC = gcc
@@ -58,6 +57,9 @@ pretty:
 	find . -name '*.c' -exec clang-format -i {} \;
 	find . -name '*.h' -exec clang-format -i {} \;
 
+$(so_name): $(OBJS)
+	$(CC) -shared -o $(so_name) $(OBJS)
+
 # Calculate sha256 of all source code files
 .PHONY: hash
 hash:
@@ -69,3 +71,4 @@ clean:
 	rm -f $(object_dir)/*.o
 	rm -f $(include_dir)/*.h.gch
 	rm -f $(test_executable)
+	rm -f $(so_name)
