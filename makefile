@@ -1,13 +1,13 @@
-source_dir = src
-include_dir = include
-object_dir = obj
-test_dir = test
+source_dir := src
+include_dir := include
+object_dir := obj
+test_dir := test
 
-so_name = libarbint.so
-test_executable = run-tests
+so_name := libarbint.so
+test_executable := run-tests
 
-CC = gcc
-CFLAGS = -std=c99 -Wall -Wextra -pedantic -I $(include_dir)
+CC := gcc
+CFLAGS := -std=c99 -Wall -Wextra -pedantic -fpic -I $(include_dir)
 
 # Dependency tracking
 # CFLAGS += -MMD
@@ -15,8 +15,6 @@ CFLAGS = -std=c99 -Wall -Wextra -pedantic -I $(include_dir)
 
 # List all .c files in the source directory
 SRCS := $(wildcard $(source_dir)/*.c)
-
-BASICS = $(include_dir)/datatypes.h
 
 # For each one, there should be a corresponding .o file in the object directory
 SRCS_stripped := $(basename $(notdir $(SRCS))) # src/%.c -> %
