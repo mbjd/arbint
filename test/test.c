@@ -92,7 +92,6 @@ test_arbint_eq()
 
 	arbint c;
 	arbint_init(&c);
-
 	arbint d;
 	arbint_init(&d);
 
@@ -127,9 +126,13 @@ test_str_to_arbint()
 	};
 
 	printf("Now starting str_to_arbint test...\n");
+	// TODO find out why the values aren't parsed correctly
+	str_to_arbint("4294967296", &a, 10); // 0, 1, 0 -> correct
 	print_arbint(&a);
-	str_to_arbint("4294967296", &a, 10);
+	str_to_arbint("42949672960000", &a, 10); // 0, 10, 0 -> correct too
 	print_arbint(&a);
+	str_to_arbint("42949672961", &a, 10); // 1, 10, 0 -> absolutely wrong
+	print_arbint(&a);                     // should be 0, 10, 1
 
 	// todo assert
 
