@@ -12,11 +12,11 @@ int tests_run = 0;
 static char*
 test_char_to_digit()
 {
-	mu_assert("char_to_digit('0') == 0", char_to_digit('0') == 0);
-	mu_assert("char_to_digit('9') == 9", char_to_digit('9') == 9);
-	mu_assert("char_to_digit('*') == -1", char_to_digit('*') == -1);
-	mu_assert("char_to_digit('a') == -1", char_to_digit('a') == -1);
-	mu_assert("char_to_digit('\\0') == -1", char_to_digit('\0') == -1);
+	mu_assert("char_to_digit('0') != 0", char_to_digit('0') == 0);
+	mu_assert("char_to_digit('9') != 9", char_to_digit('9') == 9);
+	mu_assert("char_to_digit('*') != -1", char_to_digit('*') == -1);
+	mu_assert("char_to_digit('a') != -1", char_to_digit('a') == -1);
+	mu_assert("char_to_digit('\\0') != -1", char_to_digit('\0') == -1);
 	return 0;
 }
 
