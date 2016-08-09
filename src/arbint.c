@@ -59,11 +59,7 @@ arbint_mul(arbint* to_mul, uint32_t multiplier)
 
 	if (multiplier == 0)
 	{
-		// When multiplying by 0, clear everything out
-		for (size_t i = 0; i < to_mul->length; i++)
-		{
-			to_mul->value[i] = 0;
-		}
+		arbint_set_zero(to_mul);
 		return;
 	}
 	else if (multiplier == 1)
@@ -123,6 +119,8 @@ str_to_arbint(char* input_str, arbint* to_fill, uint32_t base)
 		fprintf(stderr, "str_to_arbint: Base must be between 2 and 36\n");
 	}
 	// TODO: Trim whitespace
+
+	arbint_set_zero(to_fill);
 
 	// Get the sign
 	// Now we can be sure that to_fill points to something
