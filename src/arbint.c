@@ -107,7 +107,7 @@ arbint_init(arbint* new_arbint)
 	new_arbint->sign   = POSITIVE;
 }
 
-arbint*
+void
 str_to_arbint(char* input_str, arbint* to_fill, uint32_t base)
 {
 	if (base < 2)
@@ -162,11 +162,4 @@ str_to_arbint(char* input_str, arbint* to_fill, uint32_t base)
 
 		position++;
 	}
-
-	// TODO finish this function. Right now you have to set the
-	// attributes of each arbint struct manually, which is shit
-
-	// TODO don't return address of local variable (maybe pass
-	// an empty struct as an argument)
-	return to_fill;
 }
