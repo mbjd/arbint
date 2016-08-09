@@ -6,6 +6,9 @@ test_dir := test
 so_name := libarbint.so
 test_executable := run-tests
 
+lib_path := /usr/local/lib
+inc_path := /usr/local/include
+
 CC := gcc
 CFLAGS := -std=c99 -Wall -Wextra -pedantic -fpic -I $(include_dir)
 
@@ -35,8 +38,8 @@ run-tests: test
 
 # Link all .o files together with test.o to make a test executable
 .PHONY: test
-test: $(object_dir)/test.o $(OBJS)
-	$(CC) $(CFLAGS) -o $(test_executable) $< $(OBJS)
+test: $(object_dir)/test.o $(so_name)
+	$(CC) $(CFLAGS) -L. -larbint -o $(test_executable) $<
 
 # Put an object file of test/test.c in obj/test.o
 $(object_dir)/test.o: $(test_dir)/test.c $(test_dir)/minunit.h $(HEADERS)
@@ -55,8 +58,19 @@ pretty:
 	find . -name '*.c' -exec clang-format -i {} \;
 	find . -name '*.h' -exec clang-format -i {} \;
 
+# Shared object
 $(so_name): $(OBJS)
 	$(CC) -shared -o $(so_name) $(OBJS)
+
+.PHONY: install
+install: $(so_name)
+	cp $(so_name) $(lib_path)/$(so_name)
+	cp $(include_dir)/arbint.h $(inc_path)/arbint.h
+
+.PHONY: uninstall
+uninstall: $(so_name)
+	rm -f $(lib_path)/$(so_name)
+	rm -f $(inc_path)/arbint.h
 
 # Calculate sha256 of all source code files
 .PHONY: hash
