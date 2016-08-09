@@ -8,7 +8,7 @@ int sign_to_int(sign enum_sign);
 
 enum sign int_to_sign(int int_sign);
 
-int char_to_digit(char c);
+int char_to_digit(char c, uint32_t base);
 
 bool is_digit(const char c);
 

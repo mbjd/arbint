@@ -45,6 +45,8 @@ arbint_eq(arbint* a, arbint* b)
 	// If one or both of the structs are uninitialised (null pointer),
 	// the comparison will return false.
 
+	// TODO check if the arguments values are null pointers
+
 	// Do some easy checks first based on signs and equality to 0
 	// Right now we pass through all values twice (once now while checking
 	// for 0 and another time when checking against each other)

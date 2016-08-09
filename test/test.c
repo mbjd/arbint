@@ -12,11 +12,15 @@ int tests_run = 0;
 static char*
 test_char_to_digit()
 {
-	mu_assert("char_to_digit('0') != 0", char_to_digit('0') == 0);
-	mu_assert("char_to_digit('9') != 9", char_to_digit('9') == 9);
-	mu_assert("char_to_digit('*') != -1", char_to_digit('*') == -1);
-	mu_assert("char_to_digit('a') != -1", char_to_digit('a') == -1);
-	mu_assert("char_to_digit('\\0') != -1", char_to_digit('\0') == -1);
+	mu_assert("char_to_digit('0', 10) != 0", char_to_digit('0', 10) == 0);
+	mu_assert("char_to_digit('9', 10) != 9", char_to_digit('9', 10) == 9);
+	mu_assert("char_to_digit('*', 10) != -1", char_to_digit('*', 10) == -1);
+	mu_assert("char_to_digit('a', 10) != -1", char_to_digit('a', 10) == -1);
+	mu_assert("char_to_digit('\\0', 10) != -1", char_to_digit('\0', 10) == -1);
+	mu_assert("char_to_digit('a', 11) != 10", char_to_digit('a', 11) == 10);
+	mu_assert("char_to_digit('z', 36) != 35", char_to_digit('z', 36) == 35);
+	mu_assert("char_to_digit('Z', 36) != 35", char_to_digit('Z', 36) == 35);
+
 	return 0;
 }
 
@@ -124,7 +128,7 @@ test_str_to_arbint()
 
 	printf("Now starting str_to_arbint test...\n");
 	print_arbint(&a);
-	str_to_arbint("4294967295", &a);
+	str_to_arbint("4294967296", &a, 10);
 	print_arbint(&a);
 
 	// todo assert

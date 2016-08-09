@@ -53,17 +53,33 @@ add_to_arbint(arbint* to_add, uint32_t value, uint32_t position)
 }
 
 static void
-arbint_mul_10(arbint* to_mul)
+arbint_mul(arbint* to_mul, uint32_t multiplier)
 {
-	// Multiply an arbint by 10, useful for parsing base 10 strings.
-	size_t position      = 0;
-	uint64_t temp_result = 0;
-	uint64_t multiplier  = 10;
+	// Multiply an arbint by any 32-bit unsigned integer
+
+	if (multiplier == 0)
+	{
+		// When multiplying by 0, clear everything out
+		for (size_t i = 0; i < to_mul->length; i++)
+		{
+			to_mul->value[i] = 0;
+		}
+		return;
+	}
+	else if (multiplier == 1)
+	{
+		// Do nothing
+		return;
+	}
+
+	size_t position              = 0;
+	uint64_t temp_result         = 0;
+	uint64_t multiplier_internal = (uint64_t) multiplier;
 
 	while (position < to_mul->length)
 	{
 		// Multiply with 64-bit ints to keep possible overflow
-		temp_result = (uint64_t) to_mul->value[position] * multiplier;
+		temp_result = (uint64_t) to_mul->value[position] * multiplier_internal;
 		// Masking out may be unnecessary when casting to a smaller uint
 		to_mul->value[position] = (uint32_t)(temp_result & (UINT32_MAX));
 
@@ -90,14 +106,22 @@ arbint_init(arbint* new_arbint)
 {
 	uint32_t* value_array = calloc(1, sizeof(uint32_t));
 
-	new_arbint -> value = value_array;
-	new_arbint -> length = 1;
-	new_arbint -> sign = POSITIVE;
+	new_arbint->value  = value_array;
+	new_arbint->length = 1;
+	new_arbint->sign   = POSITIVE;
 }
 
 arbint*
-str_to_arbint(char* input_str, arbint* to_fill)
+str_to_arbint(char* input_str, arbint* to_fill, uint32_t base)
 {
+	if (base < 2)
+	{
+		fprintf(stderr, "str_to_arbint: Base must be between 2 and 36\n");
+	}
+	else if (base > 36)
+	{
+		fprintf(stderr, "str_to_arbint: Base must be between 2 and 36\n");
+	}
 	// TODO: Trim whitespace
 
 	// Get the sign
@@ -119,13 +143,14 @@ str_to_arbint(char* input_str, arbint* to_fill)
 	// 10 and move to the next digit
 	while (input_str[position])
 	{
-		int digit_val = char_to_digit(input_str[position]);
+		int digit_val = char_to_digit(input_str[position], base);
 
 		if (digit_val == -1)
 		{
 			fprintf(stderr,
-			        "str_to_arbint: Non-numeric character '%c'",
-			        input_str[position]);
+			        "str_to_arbint: Invalid character '%c' for base %d",
+			        input_str[position],
+			        base);
 			exit(EINVAL); // 22 Invalid argument
 		}
 
@@ -134,7 +159,7 @@ str_to_arbint(char* input_str, arbint* to_fill)
 		add_to_arbint(to_fill, digit_val, 0);
 		if (input_str[position + 1])
 		{
-			arbint_mul_10(to_fill);
+			arbint_mul(to_fill, base);
 		}
 
 		position++;

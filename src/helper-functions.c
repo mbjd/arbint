@@ -41,16 +41,33 @@ int_to_sign(int int_sign)
 }
 
 int
-char_to_digit(char c)
+char_to_digit(char c, uint32_t base)
 {
+	int digit;
 	if (c >= '0' && c <= '9')
 	{
-		return (int) (c - '0');
+		digit = (int) (c - '0');
+	}
+	else if (c >= 'a' && c <= 'z')
+	{
+		digit = (int) (c - 'a') + 10;
+	}
+	else if (c >= 'A' && c <= 'Z')
+	{
+		digit = (int) (c - 'A') + 10;
 	}
 	else
 	{
 		return -1;
 	}
+
+	// At this point digit can't be negative so casting to unsigned is OK
+	if ((uint8_t) digit >= base)
+	{
+		return -1;
+	}
+
+	return digit;
 }
 
 bool
