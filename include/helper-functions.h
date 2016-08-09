@@ -12,6 +12,6 @@ int char_to_digit(char c);
 
 bool is_digit(const char c);
 
-bool addition_will_wrap(uint64_t a, uint64_t b);
+bool addition_will_wrap(uint32_t a, uint32_t b);
 
 void print_arbint(arbint* to_print);

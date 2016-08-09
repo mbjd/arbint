@@ -3,6 +3,7 @@
 #include <stddef.h>
 
 #include "datatypes.h"
+#include "debug.h"
 
 #include "operators.h"
 
@@ -41,6 +42,8 @@ arbint_eq(arbint* a, arbint* b)
 {
 	// Check two arbints for numerical equality
 	// Returns false if different, true if equal
+	// If one or both of the structs are uninitialised (null pointer),
+	// the comparison will return false.
 
 	// Do some easy checks first based on signs and equality to 0
 	// Right now we pass through all values twice (once now while checking

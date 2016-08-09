@@ -60,7 +60,7 @@ is_digit(const char c)
 }
 
 bool
-addition_will_wrap(uint64_t a, uint64_t b)
+addition_will_wrap(uint32_t a, uint32_t b)
 {
 	return (a + b) < a;
 }
@@ -78,10 +78,10 @@ print_arbint(arbint* to_print)
 	}
 
 	// First we declare the value array
-	printf("uint64_t value_array[%lu] = {", to_print->length);
+	printf("uint32_t value_array[%lu] = {", to_print->length);
 	for (size_t i = 0; i < (to_print->length); i++)
 	{
-		printf("%llu%s",
+		printf("%u%s",
 		       (to_print->value)[i],
 		       i + 1 == to_print->length ? "" : ", ");
 	}
@@ -93,7 +93,7 @@ print_arbint(arbint* to_print)
 	printf("\t.length = %lu,\n", to_print->length);
 
 	// Print the sign
-	char* sign_fmt_str = "\t.sign = %s,\n";
+	char* sign_fmt_str = "\t.sign = %s\n";
 	switch (to_print->sign)
 	{
 		case NEGATIVE:

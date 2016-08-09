@@ -1,11 +1,11 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "minunit.h"
 
 #include "arbint.h"
-#include "operators.h"
 
 int tests_run = 0;
 
@@ -47,25 +47,27 @@ test_int_to_sign()
 static char*
 test_arbint_eq()
 {
-	uint64_t test_array_a[3] = {1318934184, 121983, 0};
-	uint64_t test_array_b[3] = {1318934184, 121983, 0};
+	uint32_t test_array_a[3] = {1318934184, 121983, 0};
+	uint32_t test_array_b[3] = {1318934184, 121983, 0};
+	uint32_t test_array_c[3] = {1318934185, 121983, 0}; // 1 more
+	uint32_t test_array_d[2] = {1318934184, 121983};
 
 	arbint a = {.value = test_array_a, .length = 3, .sign = POSITIVE};
 	arbint b = {.value = test_array_b, .length = 3, .sign = POSITIVE};
-
 	mu_assert("Completely equal arbints aren't equal",
 	          arbint_eq(&a, &b) == true);
 
-	uint64_t test_array_2[2] = {1318934184, 121983};
+	a.value = test_array_c;
+	mu_assert("Different arbints with same length are equal",
+	          arbint_eq(&a, &b) == false);
 
-	a.value  = test_array_2;
+	a.value  = test_array_d;
 	a.length = 2;
-
 	mu_assert("Numerically equal arbints with different length aren't equal",
 	          arbint_eq(&a, &b) == true);
 
-	uint64_t zero_array[1] = {0};
-	uint64_t one_array[1]  = {1};
+	uint32_t zero_array[1] = {0};
+	uint32_t one_array[1]  = {1};
 
 	a.value  = zero_array;
 	a.length = 1;
@@ -84,21 +86,48 @@ test_arbint_eq()
 	mu_assert("Arbints = 1 with different sign are equal",
 	          arbint_eq(&a, &b) == false);
 
+	arbint c;
+	arbint_init(&c);
+
+	arbint d;
+	arbint_init(&d);
+
+	mu_assert("Empty arbints aren't equal", arbint_eq(&c, &d) == true);
+
 	return 0;
 }
 
 static char*
 test_print()
 {
-	printf("\n%s",
+	printf("%s",
 	       "// This test would be a bit tricky to control automatically,\n"
 	       "// so it has to be checked visually right now. This bit\n"
 	       "// should be a valid C snippet declaring an arbint struct.\n");
 
-	uint64_t value_array[3] = {1318934184, 121983, 0};
+	uint32_t value_array[3] = {1318934184, 121983, 0};
 	arbint a = {.value = value_array, .length = 3, .sign = POSITIVE};
 
 	print_arbint(&a);
+
+	return 0;
+}
+
+static char*
+test_str_to_arbint()
+{
+	uint32_t* value_array = calloc(1, sizeof(uint32_t));
+
+	arbint a = {
+	    .value = value_array, .length = 1, .sign = POSITIVE,
+	};
+
+	printf("Now starting str_to_arbint test...\n");
+	print_arbint(&a);
+	str_to_arbint("4294967295", &a);
+	print_arbint(&a);
+
+	// todo assert
 
 	return 0;
 }
@@ -111,6 +140,7 @@ all_tests()
 	mu_run_test(test_int_to_sign);
 	mu_run_test(test_print);
 	mu_run_test(test_arbint_eq);
+	mu_run_test(test_str_to_arbint);
 	return 0;
 }
 

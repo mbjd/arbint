@@ -12,33 +12,87 @@
 #include "arbint.h"
 
 static void
-add_binary_to_arbint(arbint* bigint, uint64_t value, uint64_t position)
+add_to_arbint(arbint* to_add, uint32_t value, uint32_t position)
 {
 	// Add (value * (2^64) ^ position) to an arbint.
 
-	uint64_t carry =
-	    (uint64_t) addition_will_wrap(bigint->value[position], value);
-	bigint->value[position] += value;
+	// If we don't have enough space, reallocate
+	if (position >= to_add->length)
+	{
+		// Enough space so that position + the next digit will be in the array
+		size_t new_length = 2 + position;
+		to_add->value = realloc(to_add->value, new_length * sizeof(uint32_t));
+
+		if (to_add->value == NULL)
+		{
+			fprintf(stderr, "add_to_arbint: Not enough memory for realloc\n");
+			exit(12);
+		}
+
+		to_add->length = new_length;
+	}
+
+	uint32_t carry =
+	    (uint32_t) addition_will_wrap(to_add->value[position], value);
+
+	to_add->value[position] += value;
 
 	if (carry)
 	{
 		// We have to do this recursively because when this is done:
-		//   0000 1111 1111 (imagine those 4-bit ints were 64 bit)
+		//   0000 1111 1111 (imagine those 4-bit ints were 32 bit)
 		// + 0000 0000 0001
 		// = 0001 0000 0000
 		// then adding the carry to value[position+1] will itself cause an
 		// overflow, which has to be carried over another time
 		// TODO in order for this to work, we have to make sure the most
 		// significant number in bigint.value is always 0
-		add_binary_to_arbint(bigint, carry, position + 1);
+		add_to_arbint(to_add, carry, position + 1);
+	}
+	return;
+}
+
+static void
+arbint_mul_10(arbint* to_mul)
+{
+	// Multiply an arbint by 10, useful for parsing base 10 strings.
+	size_t position      = 0;
+	uint64_t temp_result = 0;
+	uint64_t multiplier  = 10;
+
+	while (position < to_mul->length)
+	{
+		// Multiply with 64-bit ints to keep possible overflow
+		temp_result = (uint64_t) to_mul->value[position] * multiplier;
+		// Masking out may be unnecessary when casting to a smaller uint
+		to_mul->value[position] = (uint32_t)(temp_result & (UINT32_MAX));
+
+		// Shift to the right to get the overflown part
+		temp_result >>= 32;
+		if (temp_result)
+		{
+			// Add the overflown part to the next digit
+			add_to_arbint(to_mul, (uint32_t) temp_result, position + 1);
+		}
+		position++;
 	}
 }
 
 void
-free_arbint_struct(arbint* to_free)
+arbint_free(arbint* to_free)
 {
 	free(to_free->value);
 	free(to_free);
+}
+
+void
+arbint_init(arbint* new_arbint)
+{
+	uint32_t* value_array = calloc(1, sizeof(uint32_t));
+
+	new_arbint -> value = value_array;
+	new_arbint -> length = 1;
+	new_arbint -> sign = POSITIVE;
 }
 
 arbint*
@@ -46,8 +100,7 @@ str_to_arbint(char* input_str, arbint* to_fill)
 {
 	if (to_fill == NULL)
 	{
-		fprintf(stderr,
-		        "str_to_arbint: The passed struct must be initialised\n");
+		fprintf(stderr, "str_to_arbint: The passed struct is a null pointer\n");
 		exit(ENOMEM); // 12 Cannot allocate memory
 	}
 
@@ -55,35 +108,43 @@ str_to_arbint(char* input_str, arbint* to_fill)
 
 	// Get the sign
 	// Now we can be sure that to_fill points to something
-	to_fill->sign = POSITIVE;
 	if (input_str[0] == '-')
 	{
 		to_fill->sign = NEGATIVE;
 		input_str++;
 	}
-
-	int input_length = strlen(input_str);
-
-	// Make sure we only have numbers in the string
-	size_t pos = 0;
-	while (input_str[pos] != '\0')
+	else
 	{
-		if (!is_digit(input_str[pos]))
-		{
-			fprintf(stderr,
-			        "The input string contains non-numeric characters.");
-			exit(1);
-		}
-		pos++;
+		to_fill->sign = POSITIVE;
 	}
 
-	// Convert to arbint
-	// If a = log10(input), the length of the number in base 2^64 will
-	// be a / (log10(2^64)) = a / (log10(2) * 64) = a / 19.265
-	size_t arbint_length = 2 + (((double) input_length) / 19.265);
+	size_t position = 0;
 
-	// Allocate that amount of space
-	to_fill->value = calloc(arbint_length, sizeof(uint64_t));
+	// Iterate over the string, starting at the most significant digit. Every
+	// time a digit is read, we multiply the accumulated value in to_fill by
+	// 10 and move to the next digit
+	while (input_str[position])
+	{
+		int digit_val = char_to_digit(input_str[position]);
+
+		if (digit_val == -1)
+		{
+			fprintf(stderr,
+			        "str_to_arbint: Non-numeric character '%c'",
+			        input_str[position]);
+			exit(EINVAL); // 22 Invalid argument
+		}
+
+		// - Add the digit to the arbint
+		// - Multiply the arbint by 10
+		add_to_arbint(to_fill, digit_val, 0);
+		if (input_str[position + 1])
+		{
+			arbint_mul_10(to_fill);
+		}
+
+		position++;
+	}
 
 	// TODO finish this function. Right now you have to set the
 	// attributes of each arbint struct manually, which is shit
