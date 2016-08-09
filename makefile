@@ -58,6 +58,10 @@ pretty:
 	find . -name '*.c' -exec clang-format -i {} \;
 	find . -name '*.h' -exec clang-format -i {} \;
 
+# Calculate sha256 of all source code files
+.PHONY: hash
+hash:
+	find . -name '*.c' -print0 -o -name '*.h' -print0 | xargs -0 cat | gsha256sum
 
 .PHONY: clean
 clean:
