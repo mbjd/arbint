@@ -98,12 +98,6 @@ arbint_init(arbint* new_arbint)
 arbint*
 str_to_arbint(char* input_str, arbint* to_fill)
 {
-	if (to_fill == NULL)
-	{
-		fprintf(stderr, "str_to_arbint: The passed struct is a null pointer\n");
-		exit(ENOMEM); // 12 Cannot allocate memory
-	}
-
 	// TODO: Trim whitespace
 
 	// Get the sign
