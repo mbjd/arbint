@@ -154,9 +154,7 @@ test_arbint_mul()
 	value_array_c[1]        = 0;
 	value_array_c[2]        = 4200000000;
 	arbint c = {.value = value_array_c, .length = 3, .sign = POSITIVE};
-	print_arbint(&c);
 	arbint_mul(&c, 1291);
-	print_arbint(&c);
 	mu_assert("arbint_mul didn't reallocate correctly", c.length == 4);
 	mu_assert("arbint_mul by 1291 failed",
 	          c.value[0] == 0 && c.value[1] == 0 && c.value[2] == 1951272448 &&
