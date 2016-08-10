@@ -100,41 +100,67 @@ test_arbint_eq()
 	return 0;
 }
 
+// static char*
+// test_str_to_arbint()
+// {
+// 	uint32_t* value_array = calloc(1, sizeof(uint32_t));
+//
+// 	arbint a = {
+// 	    .value = value_array, .length = 1, .sign = POSITIVE,
+// 	};
+//
+// 	printf("Now starting str_to_arbint test...\n");
+// 	str_to_arbint("4294967296", &a, 10); // {0, 1, 0}
+// 	print_arbint(&a);
+//
+// 	char* str;
+// 	arbint_to_str(&a, &str, 10);
+// 	printf("%s\n", str);
+//
+//
+// 	// arbint_to_str(&a, &str, 10);
+// 	// printf("%s\n", str);
+//
+// 	// todo assert
+//
+// 	return 0;
+// }
+
 static char*
-test_print()
+test_arbint_mul()
 {
-	printf("%s",
-	       "// This test would be a bit tricky to control automatically,\n"
-	       "// so it has to be checked visually right now. This bit\n"
-	       "// should be a valid C snippet declaring an arbint struct.\n");
+	uint32_t* value_array_a = calloc(3, sizeof(uint32_t));
+	value_array_a[0]        = 4294967295;
+	value_array_a[1]        = 0;
+	value_array_a[2]        = 0;
+	arbint a = {.value = value_array_a, .length = 3, .sign = POSITIVE};
+	arbint_mul(&a, 10);
+	mu_assert("arbint_mul by 10 failed",
+	          a.value[0] == 4294967286 && a.value[1] == 9 && a.value[2] == 0);
 
-	uint32_t value_array[3] = {1318934184, 121983, 0};
-	arbint a = {.value = value_array, .length = 3, .sign = POSITIVE};
+	uint32_t* value_array_b = calloc(3, sizeof(uint32_t));
+	value_array_b[0]        = 4294967295;
+	value_array_b[1]        = 4294967295;
+	value_array_b[2]        = 0;
+	arbint b = {.value = value_array_b, .length = 3, .sign = POSITIVE};
+	arbint_mul(&b, 666);
+	mu_assert("arbint_mul by 666 failed",
+	          b.value[0] == 4294966630 && b.value[1] == 4294967295 &&
+	              b.value[2] == 665);
 
-	print_arbint(&a);
-
-	return 0;
-}
-
-static char*
-test_str_to_arbint()
-{
-	uint32_t* value_array = calloc(1, sizeof(uint32_t));
-
-	arbint a = {
-	    .value = value_array, .length = 1, .sign = POSITIVE,
-	};
-
-	printf("Now starting str_to_arbint test...\n");
-	// TODO find out why the values aren't parsed correctly
-	str_to_arbint("4294967296", &a, 10); // 0, 1, 0 -> correct
-	print_arbint(&a);
-	str_to_arbint("42949672960", &a, 10); // 0, 10, 0 -> correct too
-	print_arbint(&a);
-	str_to_arbint("42949672961", &a, 10); // 1, 10, 0 -> absolutely wrong
-	print_arbint(&a);                     // should be 0, 10, 1
-
-	// todo assert
+	// This test should reallocate c.value to fit the larger value
+	uint32_t* value_array_c = calloc(3, sizeof(uint32_t));
+	value_array_c[0]        = 0;
+	value_array_c[1]        = 0;
+	value_array_c[2]        = 4200000000;
+	arbint c = {.value = value_array_c, .length = 3, .sign = POSITIVE};
+	print_arbint(&c);
+	arbint_mul(&c, 1291);
+	print_arbint(&c);
+	mu_assert("arbint_mul didn't reallocate correctly", c.length == 4);
+	mu_assert("arbint_mul by 1291 failed",
+	          c.value[0] == 0 && c.value[1] == 0 && c.value[2] == 1951272448 &&
+	              c.value[3] == 1262);
 
 	return 0;
 }
@@ -145,9 +171,9 @@ all_tests()
 	mu_run_test(test_char_to_digit);
 	mu_run_test(test_sign_to_int);
 	mu_run_test(test_int_to_sign);
-	mu_run_test(test_print);
 	mu_run_test(test_arbint_eq);
-	mu_run_test(test_str_to_arbint);
+	mu_run_test(test_arbint_mul);
+	// mu_run_test(test_str_to_arbint);
 	return 0;
 }
 

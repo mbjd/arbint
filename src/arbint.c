@@ -15,12 +15,14 @@ static void
 add_to_arbint(arbint* to_add, uint32_t value, uint32_t position)
 {
 	// Add (value * (2^64) ^ position) to an arbint.
+	// This adds value to to_add->value[position], and if there's an overflow,
+	// it recursively adds the overflow to the more significant digit.
 
 	// If we don't have enough space, reallocate
 	if (position >= to_add->length)
 	{
 		// Enough space so that position + the next digit will be in the array
-		size_t new_length = 2 + position;
+		size_t new_length = 1 + position;
 		to_add->value = realloc(to_add->value, new_length * sizeof(uint32_t));
 
 		if (to_add->value == NULL)
@@ -52,7 +54,7 @@ add_to_arbint(arbint* to_add, uint32_t value, uint32_t position)
 	return;
 }
 
-static void
+void
 arbint_mul(arbint* to_mul, uint32_t multiplier)
 {
 	// Multiply an arbint by any 32-bit unsigned integer
@@ -68,26 +70,35 @@ arbint_mul(arbint* to_mul, uint32_t multiplier)
 		return;
 	}
 
-	size_t position              = 0;
-	uint64_t temp_result         = 0;
-	uint64_t multiplier_internal = (uint64_t) multiplier;
+	size_t position      = 0;
+	uint64_t temp_result = 0;
 
-	while (position < to_mul->length)
+	// - 1 because we already have it one time
+	uint64_t multiplier_internal = (uint64_t) multiplier - 1;
+
+	// Compute the result of each digit multiplied by the multiplier
+	// mul_results = [int(i) * multiplier for i in to_mul->value]
+	uint64_t* mul_results = calloc(to_mul->length, sizeof(uint64_t));
+	for (size_t position = 0; position < to_mul->length; position++)
 	{
 		// Multiply with 64-bit ints to keep possible overflow
 		temp_result = (uint64_t) to_mul->value[position] * multiplier_internal;
-		// Masking out may be unnecessary when casting to a smaller uint
-		to_mul->value[position] = (uint32_t)(temp_result & (UINT32_MAX));
-
-		// Shift to the right to get the overflown part
-		temp_result >>= 32;
-		if (temp_result)
-		{
-			// Add the overflown part to the next digit
-			add_to_arbint(to_mul, (uint32_t) temp_result, position + 1);
-		}
-		position++;
+		mul_results[position] = temp_result;
 	}
+
+	// Add those results together
+	size_t max_digits = to_mul->length;
+	for (position = 0; position < max_digits; position++)
+	{
+		// Add the lower 32 bits to the value at position
+		add_to_arbint(to_mul, (uint32_t) mul_results[position], position);
+
+		// Add the upper 32 bits to the next value
+		add_to_arbint(
+		    to_mul, (uint32_t)(mul_results[position] >> 32), position + 1);
+	}
+
+	free(mul_results);
 }
 
 void
@@ -161,5 +172,27 @@ str_to_arbint(char* input_str, arbint* to_fill, uint32_t base)
 		}
 
 		position++;
+	}
+}
+
+void
+arbint_to_str(arbint* to_convert, char** to_fill /*, uint32_t base*/)
+{
+	// TODO Check if 2 <= base <= 36
+	// TODO actually output a string and not a bc program
+
+	// xxxxxxxxx * ((2^32)^y) +
+	size_t str_length = to_convert->length * 27;
+
+	*to_fill = calloc(str_length, sizeof(char));
+
+	char* str = *to_fill;
+	for (size_t i = 0; i < to_convert->length; i++)
+	{
+		str += sprintf(str,
+		               "%u * ((2^32)^%lu) %s",
+		               to_convert->value[i],
+		               i,
+		               i + 1 == to_convert->length ? "" : " + ");
 	}
 }
