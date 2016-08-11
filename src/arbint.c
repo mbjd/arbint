@@ -18,6 +18,12 @@ add_to_arbint(arbint* to_add, uint32_t value, uint32_t position)
 	// This adds value to to_add->value[position], and if there's an overflow,
 	// it recursively adds the overflow to the more significant digit.
 
+	if (value == 0)
+	{
+		// x + 0 = x
+		return;
+	}
+
 	// If we don't have enough space, reallocate
 	if (position >= to_add->length)
 	{
@@ -34,8 +40,7 @@ add_to_arbint(arbint* to_add, uint32_t value, uint32_t position)
 		to_add->length = new_length;
 	}
 
-	uint32_t carry =
-	    (uint32_t) addition_will_wrap(to_add->value[position], value);
+	uint32_t carry = addition_will_wrap(to_add->value[position], value);
 
 	to_add->value[position] += value;
 
@@ -61,32 +66,48 @@ arbint_mul(arbint* to_mul, uint32_t multiplier)
 
 	if (multiplier == 0)
 	{
+		// x * 0 = 0
 		arbint_set_zero(to_mul);
 		return;
 	}
 	else if (multiplier == 1)
 	{
-		// Do nothing
+		// x * 1 = x
 		return;
 	}
 
 	size_t position      = 0;
 	uint64_t temp_result = 0;
 
-	// - 1 because we already have it one time
+	// - 1 because instead of (return n*x) we do (x += (x*(n-1)))
 	uint64_t multiplier_internal = (uint64_t) multiplier - 1;
 
-	// Compute the result of each digit multiplied by the multiplier
-	// mul_results = [int(i) * multiplier for i in to_mul->value]
+	// Compute the result of each digit multiplied by the multiplier and store
+	// it in mul_results
 	uint64_t* mul_results = calloc(to_mul->length, sizeof(uint64_t));
 	for (size_t position = 0; position < to_mul->length; position++)
 	{
-		// Multiply with 64-bit ints to keep possible overflow
+		// Multiply using 64-bit ints to keep possible overflow
 		temp_result = (uint64_t) to_mul->value[position] * multiplier_internal;
 		mul_results[position] = temp_result;
 	}
 
-	// Add those results together
+	/*
+	At this point we have about the following:
+	(imagine that 4 bits were 32 bits)
+
+	      #3   #2   #1   #0
+	     xxxx xxxx xxxx xxxx // original number
+	               xxxx xxxx // digit #0 * (multiplier - 1) \
+	          xxxx xxxx      // digit #1 * (multiplier - 1) | stored in
+	     xxxx xxxx           // digit #2 * (multiplier - 1) | mul_results
+	xxxx xxxx                // digit #3 * (multiplier - 1) /
+
+	Now we need to add all the above rows together. If the most significant
+	digit overflowed, add_to_arbint will reallocate to_mul->value to fit an
+	extra digit.
+	*/
+
 	size_t max_digits = to_mul->length;
 	for (position = 0; position < max_digits; position++)
 	{
@@ -94,8 +115,8 @@ arbint_mul(arbint* to_mul, uint32_t multiplier)
 		add_to_arbint(to_mul, (uint32_t) mul_results[position], position);
 
 		// Add the upper 32 bits to the next value
-		add_to_arbint(
-		    to_mul, (uint32_t)(mul_results[position] >> 32), position + 1);
+		mul_results[position] >>= 32;
+		add_to_arbint(to_mul, (uint32_t) mul_results[position], position + 1);
 	}
 
 	free(mul_results);
