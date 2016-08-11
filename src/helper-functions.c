@@ -129,7 +129,7 @@ print_arbint(arbint* to_print)
 			printf(sign_fmt_str, "POSITIVE");
 			break;
 		default:
-			printf(sign_fmt_str, "<undefined>");
+			printf(sign_fmt_str, "< invalid >");
 			break;
 	}
 	printf("};\n");
