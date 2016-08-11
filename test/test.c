@@ -7,7 +7,8 @@
 
 #include "arbint.h"
 
-int tests_run = 0;
+int tests_run      = 0;
+int assertions_run = 0;
 
 static char*
 test_char_to_digit()
@@ -100,31 +101,37 @@ test_arbint_eq()
 	return 0;
 }
 
-// static char*
-// test_str_to_arbint()
-// {
-// 	uint32_t* value_array = calloc(1, sizeof(uint32_t));
-//
-// 	arbint a = {
-// 	    .value = value_array, .length = 1, .sign = POSITIVE,
-// 	};
-//
-// 	printf("Now starting str_to_arbint test...\n");
-// 	str_to_arbint("4294967296", &a, 10); // {0, 1, 0}
-// 	print_arbint(&a);
-//
-// 	char* str;
-// 	arbint_to_str(&a, &str, 10);
-// 	printf("%s\n", str);
-//
-//
-// 	// arbint_to_str(&a, &str, 10);
-// 	// printf("%s\n", str);
-//
-// 	// todo assert
-//
-// 	return 0;
-// }
+static char*
+test_str_to_arbint()
+{
+	arbint a;
+	arbint_init(&a);
+	str_to_arbint("4294967296", &a, 10);
+	mu_assert("str_to_arbint with UINT32_MAX failed",
+	          a.value[0] == 0 && a.value[1] == 1 && a.length == 2 &&
+	              a.sign == POSITIVE);
+
+	arbint_init(&a);
+	str_to_arbint("-4294967296", &a, 10);
+	mu_assert("str_to_arbint with -UINT32_MAX failed",
+	          a.value[0] == 0 && a.value[1] == 1 && a.length == 2 &&
+	              a.sign == NEGATIVE);
+
+	arbint_init(&a);
+	str_to_arbint("792384103083241340432014773910347139419741", &a, 10);
+	mu_assert("str_to_arbint with random huge value failed",
+	          a.value[0] == 313953885 && a.value[1] == 3019150336 &&
+	              a.value[2] == 3284471345 && a.value[3] == 2609588367 &&
+	              a.value[4] == 2328 && a.length == 5 && a.sign == POSITIVE);
+
+	str_to_arbint("-792384103083241340432014773910347139419741", &a, 10);
+	mu_assert("2nd str_to_arbint with random huge value failed",
+	          a.value[0] == 313953885 && a.value[1] == 3019150336 &&
+	              a.value[2] == 3284471345 && a.value[3] == 2609588367 &&
+	              a.value[4] == 2328 && a.length == 5 && a.sign == NEGATIVE);
+
+	return 0;
+}
 
 static char*
 test_arbint_mul()
@@ -148,17 +155,68 @@ test_arbint_mul()
 	          b.value[0] == 4294966630 && b.value[1] == 4294967295 &&
 	              b.value[2] == 665);
 
-	// This test should reallocate c.value to fit the larger value
+	// This test should put the most significant digit close to overflowing,
+	// but should not allocate new space in c.value.
 	uint32_t* value_array_c = calloc(3, sizeof(uint32_t));
-	value_array_c[0]        = 0;
-	value_array_c[1]        = 0;
-	value_array_c[2]        = 4200000000;
+	value_array_c[0]        = 4294967295;
+	value_array_c[1]        = 4294967295;
+	value_array_c[2]        = 0;
 	arbint c = {.value = value_array_c, .length = 3, .sign = POSITIVE};
-	arbint_mul(&c, 1291);
-	mu_assert("arbint_mul didn't reallocate correctly", c.length == 4);
+	arbint_mul(&c, UINT32_MAX);
+	mu_assert("arbint_mul by UINT32_MAX reallocated unnecessarily",
+	          c.length == 3);
+	mu_assert("arbint_mul by UINT32_MAX failed",
+	          c.value[0] == 1 && c.value[1] == 4294967295 &&
+	              c.value[2] == 4294967294);
+
+	// This test should reallocate c.value to fit the larger value
+	uint32_t* value_array_d = calloc(3, sizeof(uint32_t));
+	value_array_d[0]        = 0;
+	value_array_d[1]        = 0;
+	value_array_d[2]        = 4200000000;
+	arbint d = {.value = value_array_d, .length = 3, .sign = POSITIVE};
+	arbint_mul(&d, 1291);
+	mu_assert("arbint_mul by 1291 didn't reallocate correctly", d.length == 4);
 	mu_assert("arbint_mul by 1291 failed",
-	          c.value[0] == 0 && c.value[1] == 0 && c.value[2] == 1951272448 &&
-	              c.value[3] == 1262);
+	          d.value[0] == 0 && d.value[1] == 0 && d.value[2] == 1951272448 &&
+	              d.value[3] == 1262);
+
+	arbint_free_static(&a);
+	arbint_free_static(&b);
+	arbint_free_static(&c);
+	arbint_free_static(&d);
+
+	return 0;
+}
+
+static char*
+test_str_mul_eq()
+{
+	arbint b;
+	arbint c;
+
+	arbint_init(&b);
+	arbint_init(&c);
+	// Initialize so that c = 10 * b
+	str_to_arbint("999999999999999999999999", &b, 10);
+	str_to_arbint("9999999999999999999999990", &c, 10);
+	// Multiply so that c = b
+	arbint_mul(&b, 10);
+	mu_assert("either arbint_eq or arbint_mul doesn't work (1)",
+	          arbint_eq(&b, &c));
+
+	arbint_init(&b);
+	arbint_init(&c);
+	// Initialize so that c = 10 * b
+	str_to_arbint("-77777777777777777777777777777777777777", &b, 10);
+	str_to_arbint("-7777777777777777777777777777777777777700000000", &c, 10);
+	// Multiply so that c = b
+	arbint_mul(&b, 100000000);
+	mu_assert("either arbint_eq or arbint_mul doesn't work (2)",
+	          arbint_eq(&b, &c));
+
+	arbint_free_static(&b);
+	arbint_free_static(&c);
 
 	return 0;
 }
@@ -170,8 +228,10 @@ all_tests()
 	mu_run_test(test_sign_to_int);
 	mu_run_test(test_int_to_sign);
 	mu_run_test(test_arbint_eq);
+
 	mu_run_test(test_arbint_mul);
-	// mu_run_test(test_str_to_arbint);
+	mu_run_test(test_str_to_arbint);
+	mu_run_test(test_str_mul_eq);
 	return 0;
 }
 
@@ -185,9 +245,9 @@ main()
 	}
 	else
 	{
-		printf("ALL TESTS PASSED :D\n");
+		printf("\nALL TESTS PASSED :D\n");
 	}
-	printf("Tests run: %d\n", tests_run);
+	printf("%d tests, %d assertions\n", tests_run, assertions_run);
 
 	return result != 0;
 }
