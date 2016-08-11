@@ -1,9 +1,11 @@
 #include <assert.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdlib.h>
 
 #include "datatypes.h"
 #include "debug.h"
+#include "helper-functions.h"
 
 #include "operators.h"
 
@@ -42,10 +44,18 @@ arbint_eq(arbint* a, arbint* b)
 {
 	// Check two arbints for numerical equality
 	// Returns false if different, true if equal
-	// If one or both of the structs are uninitialised (null pointer),
-	// the comparison will return false.
+	// If one of the values is uninitialised, the comparison returns false.
 
-	// TODO check if the arguments values are null pointers
+	if (a == NULL || b == NULL)
+	{
+		fprintf(stderr, "arbint_eq: Got null pointer as argument");
+		exit(14); // EFAULT bad address
+	}
+
+	if (a->value == NULL || b->value == NULL)
+	{
+		return false;
+	}
 
 	// Do some easy checks first based on signs and equality to 0
 	// Right now we pass through all values twice (once now while checking

@@ -130,6 +130,12 @@ arbint_free(arbint* to_free)
 }
 
 void
+arbint_free_static(arbint* to_free)
+{
+	free(to_free->value);
+}
+
+void
 arbint_init(arbint* new_arbint)
 {
 	uint32_t* value_array = calloc(1, sizeof(uint32_t));
@@ -200,6 +206,7 @@ void
 arbint_to_str(arbint* to_convert, char** to_fill /*, uint32_t base*/)
 {
 	// TODO Check if 2 <= base <= 36
+	// TODO actually support different bases
 	// TODO actually output a string and not a bc program
 
 	// xxxxxxxxx * ((2^32)^y) +
