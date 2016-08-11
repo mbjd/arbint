@@ -28,15 +28,23 @@ add_to_arbint(arbint* to_add, uint32_t value, uint32_t position)
 	if (position >= to_add->length)
 	{
 		// Enough space so that position + the next digit will be in the array
-		size_t new_length = 1 + position;
-		to_add->value = realloc(to_add->value, new_length * sizeof(uint32_t));
-
-		if (to_add->value == NULL)
+		size_t new_length = position + 1;
+		uint32_t* new_value =
+		    realloc(to_add->value, new_length * sizeof(uint32_t));
+		if (new_value == NULL)
 		{
-			fprintf(stderr, "add_to_arbint: Not enough memory for realloc\n");
-			exit(12);
+			fprintf(stderr, "add_to_arbint: failed to realloc\n");
+			exit(12); // ENOMEM cannot allocate memory
 		}
 
+		// Set the newly allocated space to zero
+		// TODO use memset if faster
+		for (size_t i = to_add->length; i < new_length; i++)
+		{
+			new_value[i] = 0;
+		}
+
+		to_add->value = new_value;
 		to_add->length = new_length;
 	}
 
