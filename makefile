@@ -52,12 +52,6 @@ $(object_dir)/test.o: $(test_dir)/test.c $(test_dir)/minunit.h $(HEADERS)
 $(object_dir)/%.o: $(source_dir)/%.c $(HEADERS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# Format all .c and .h files
-.PHONY: pretty
-pretty:
-	find . -name '*.c' -exec clang-format -i {} \;
-	find . -name '*.h' -exec clang-format -i {} \;
-
 # Shared object
 $(so_name): $(OBJS)
 	$(CC) -shared -o $(so_name) $(OBJS)
@@ -72,10 +66,22 @@ uninstall: $(so_name)
 	rm -f $(lib_path)/$(so_name)
 	rm -f $(inc_path)/arbint.h
 
+# Format all .c and .h files
+.PHONY: pretty
+pretty:
+	find . -name '*.c' -exec clang-format -i {} \;
+	find . -name '*.h' -exec clang-format -i {} \;
+
 # Calculate sha256 of all source code files
 .PHONY: hash
 hash:
-	find . -name '*.c' -print0 -o -name '*.h' -print0 | xargs -0 cat | gsha256sum
+	@find . -name '*.c' -print0 -o -name '*.h' -print0 | xargs -0 cat | gsha256sum | tr -d ' -'
+
+# Count non-empty lines (code + comments) without unit testing
+.PHONY: count
+count:
+	@{ find src -type f -print0; find include -type f -print0; } | xargs -0 cat | awk 'length>0 {print}' | wc -l | xargs
+
 
 .PHONY: clean
 clean:
