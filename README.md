@@ -14,7 +14,11 @@ tests successfully :D
 ### Todo list:
 
 - Fix segfault in `arbint_eq` when one of the structs is uninitialised
+	- So structs are always 'initialised', but may contain random
+	  gibberish. So my solution is to always call arbint_init on each
+	  arbint right after creation.
 - Construct `arbint` structs from strings or integers
+	- From strings: done with str\_to\_arbint, from ints is the easy part
 - Implement basic math functions with `arbint` structs and 'normal' numbers
 - Return error codes if something goes wrong instead of printing a message to
   stderr and exiting
