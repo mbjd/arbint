@@ -118,14 +118,14 @@ test_str_to_arbint()
 	              a.sign == NEGATIVE);
 
 	arbint_init(&a);
-	str_to_arbint("792384103083241340432014773910347139419741", &a, 10);
-	mu_assert("str_to_arbint with random huge value failed",
+	str_to_arbint("+792384103083241340432014773910347139419741", &a, 10);
+	mu_assert("str_to_arbint with random huge value and leading + failed",
 	          a.value[0] == 313953885 && a.value[1] == 3019150336 &&
 	              a.value[2] == 3284471345 && a.value[3] == 2609588367 &&
 	              a.value[4] == 2328 && a.length == 5 && a.sign == POSITIVE);
 
 	str_to_arbint("-792384103083241340432014773910347139419741", &a, 10);
-	mu_assert("2nd str_to_arbint with random huge value failed",
+	mu_assert("str_to_arbint with -(random huge value) failed",
 	          a.value[0] == 313953885 && a.value[1] == 3019150336 &&
 	              a.value[2] == 3284471345 && a.value[3] == 2609588367 &&
 	              a.value[4] == 2328 && a.length == 5 && a.sign == NEGATIVE);
@@ -222,16 +222,119 @@ test_str_mul_eq()
 }
 
 static char*
+test_u64_to_arbint()
+{
+	// Test uninitialised
+	arbint a;
+	u64_to_arbint(9120311729134, &a);
+	mu_assert("u64_to_arbint failed (1)",
+	          a.length == 2 && a.value[0] == 2096159726 && a.value[1] == 2123 &&
+	              a.sign == POSITIVE);
+
+	// Test initialised
+	arbint b;
+	arbint_init(&b);
+	u64_to_arbint(9120311729134, &b);
+	mu_assert("u64_to_arbint failed (2)",
+	          b.length == 2 && b.value[0] == 2096159726 && b.value[1] == 2123 &&
+	              b.sign == POSITIVE);
+
+	// Test with 2^32 - 1
+	arbint c;
+	u64_to_arbint(UINT32_MAX, &c);
+	mu_assert("u64_to_arbint with UINT64_MAX alloc's too much", c.length == 1);
+	mu_assert("u64_to_arbint with UINT64_MAX failed", c.value[0] == UINT32_MAX);
+
+	// Test with 2^64 - 1
+	arbint d;
+	u64_to_arbint(UINT64_MAX, &d);
+	mu_assert("u64_to_arbint with UINT64_MAX failed",
+	          d.length == 2 && d.value[0] == UINT32_MAX &&
+	              d.value[1] == UINT32_MAX);
+
+	arbint_free_static(&a);
+	arbint_free_static(&b);
+	arbint_free_static(&c);
+	arbint_free_static(&d);
+
+	return 0;
+}
+
+static char*
+test_arbint_copy()
+{
+	arbint a;
+	arbint_init(&a);
+	str_to_arbint("+792384103083241340432014773910347139419741", &a, 10);
+	mu_assert("str_to_arbint in test_arbint_copy failed",
+	          a.value[0] == 313953885 && a.value[1] == 3019150336 &&
+	              a.value[2] == 3284471345 && a.value[3] == 2609588367 &&
+	              a.value[4] == 2328 && a.length == 5 && a.sign == POSITIVE);
+
+	arbint* b = arbint_copy(&a);
+
+	mu_assert("arbint_copy changed values",
+	          b->value[0] == 313953885 && b->value[1] == 3019150336 &&
+	              b->value[2] == 3284471345 && b->value[3] == 2609588367 &&
+	              b->value[4] == 2328 && b->length == 5 && b->sign == POSITIVE);
+
+	mu_assert("arbint_copy returned same pointer instead of copying",
+	          b->value != a.value);
+
+	return 0;
+}
+
+static char*
+test_arbint_add()
+{
+	arbint a;
+	arbint b;
+	arbint expected;
+	arbint_init(&a);
+	arbint_init(&b);
+	arbint_init(&expected);
+
+	str_to_arbint("100", &a, 10);
+	str_to_arbint("200", &b, 10);
+	str_to_arbint("300", &expected, 10);
+
+	arbint* result = arbint_add(&a, &b);
+
+	mu_assert("arbint_add doesn't work", arbint_eq(&expected, result));
+	arbint_free(result);
+
+	str_to_arbint("222222222222222222222222222222222222", &a, 10);
+	str_to_arbint("444444444444444444444444444444444444", &b, 10);
+	str_to_arbint("666666666666666666666666666666666666", &expected, 10);
+
+	result = arbint_add(&a, &b);
+
+	mu_assert("arbint_add doesn't work with long numbers", arbint_eq(&expected, result));
+
+	arbint_free_static(&a);
+	arbint_free_static(&b);
+	arbint_free_static(&expected);
+	arbint_free(result);
+
+	return 0;
+}
+
+static char*
 all_tests()
 {
 	mu_run_test(test_char_to_digit);
 	mu_run_test(test_sign_to_int);
 	mu_run_test(test_int_to_sign);
-	mu_run_test(test_arbint_eq);
 
+	mu_run_test(test_arbint_eq);
 	mu_run_test(test_arbint_mul);
+	mu_run_test(test_arbint_add);
 	mu_run_test(test_str_to_arbint);
 	mu_run_test(test_str_mul_eq);
+
+	mu_run_test(test_arbint_copy);
+
+	mu_run_test(test_u64_to_arbint);
 	return 0;
 }
 
