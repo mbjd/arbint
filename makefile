@@ -12,10 +12,6 @@ inc_path := /usr/local/include
 CC := gcc
 CFLAGS := -std=c99 -Wall -Wextra -pedantic -fpic -I $(include_dir)
 
-# Dependency tracking
-# CFLAGS += -MMD
-# -include *.d
-
 # List all .c files in the source directory
 SRCS := $(wildcard $(source_dir)/*.c)
 
@@ -69,8 +65,9 @@ uninstall: $(so_name)
 # Format all .c and .h files
 .PHONY: pretty
 pretty:
-	find . -name '*.c' -exec clang-format -i {} \;
-	find . -name '*.h' -exec clang-format -i {} \;
+	@find . -name '*.c' -exec clang-format -i {} \;
+	@find . -name '*.h' -exec clang-format -i {} \;
+	@echo Formatted all .c and .h files with clang-format
 
 # Calculate sha256 of all source code files
 .PHONY: hash
@@ -82,6 +79,10 @@ hash:
 count:
 	@{ find src -type f -print0; find include -type f -print0; } | xargs -0 cat | awk 'length>0 {print}' | wc -l | xargs
 
+# Count non-empty lines in all .c and .h files
+.PHONY: count-all
+count-all:
+	@{ find . -name '*.c' -print0 -o -name '*.h' -print0; } | xargs -0 cat | awk 'length>0 {print}' | wc -l | xargs
 
 .PHONY: clean
 clean:
