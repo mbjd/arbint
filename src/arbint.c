@@ -11,62 +11,6 @@
 
 #include "arbint.h"
 
-static void
-add_to_arbint(arbint* to_add, uint32_t value, uint32_t position)
-{
-	// Add (value * (2^64) ^ position) to an arbint.
-	// This adds value to to_add->value[position], and if there's an overflow,
-	// it recursively adds the overflow to the more significant digit.
-
-	if (value == 0)
-	{
-		// x + 0 = x
-		return;
-	}
-
-	// If we don't have enough space, reallocate
-	if (position >= to_add->length)
-	{
-		// Enough space so that position + the next digit will be in the array
-		size_t new_length = position + 1;
-		uint32_t* new_value =
-		    realloc(to_add->value, new_length * sizeof(uint32_t));
-		if (new_value == NULL)
-		{
-			fprintf(stderr, "add_to_arbint: failed to realloc\n");
-			exit(12); // ENOMEM cannot allocate memory
-		}
-
-		// Set the newly allocated space to zero
-		// TODO use memset if faster
-		for (size_t i = to_add->length; i < new_length; i++)
-		{
-			new_value[i] = 0;
-		}
-
-		to_add->value = new_value;
-		to_add->length = new_length;
-	}
-
-	uint32_t carry = addition_will_wrap(to_add->value[position], value);
-
-	to_add->value[position] += value;
-
-	if (carry)
-	{
-		// We have to do this recursively because when this is done:
-		//   0000 1111 1111 (imagine those 4-bit ints were 32 bit)
-		// + 0000 0000 0001
-		// = 0001 0000 0000
-		// then adding the carry to value[position+1] will itself cause an
-		// overflow, which has to be carried over another time
-		// TODO in order for this to work, we have to make sure the most
-		// significant number in bigint.value is always 0
-		add_to_arbint(to_add, carry, position + 1);
-	}
-	return;
-}
-
 void
 arbint_mul(arbint* to_mul, uint32_t multiplier)
 {
@@ -178,6 +122,8 @@ str_to_arbint(char* input_str, arbint* to_fill, uint32_t base)
 	else
 	{
 		to_fill->sign = POSITIVE;
+		if (input_str[0] == '+')
+			input_str++;
 	}
 
 	size_t position = 0;
@@ -207,6 +153,31 @@ str_to_arbint(char* input_str, arbint* to_fill, uint32_t base)
 		}
 
 		position++;
+	}
+}
+
+void
+u64_to_arbint(uint64_t value, arbint* to_fill)
+{
+	to_fill->sign = POSITIVE;
+
+	uint32_t lower_value  = (uint32_t)(value & 0xFFFFFFFF);
+	uint32_t higher_value = (uint32_t)(value >> (sizeof(uint32_t) * CHAR_BIT));
+
+	// If value uses the upper 32 bits, use two digits
+	if (higher_value)
+	{
+		to_fill->value    = calloc(2, sizeof(uint32_t));
+		to_fill->length   = 2;
+		to_fill->value[0] = lower_value;
+		to_fill->value[1] = higher_value;
+	}
+	// If it only uses the lower 32 bits, use one digit
+	else
+	{
+		to_fill->value    = calloc(1, sizeof(uint32_t));
+		to_fill->length   = 1;
+		to_fill->value[0] = lower_value;
 	}
 }
 

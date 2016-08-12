@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "datatypes.h"
 
@@ -89,6 +90,33 @@ bool
 addition_will_wrap(uint32_t a, uint32_t b)
 {
 	return (a + b) < a;
+}
+
+arbint*
+arbint_copy(arbint* src)
+{
+	// Allocate struct
+	arbint* dest = calloc(1, sizeof(arbint));
+
+	// Copy the value over
+	size_t bytes_to_copy = src->length * sizeof(uint32_t);
+	uint32_t* dest_value = malloc(bytes_to_copy);
+	if (dest_value == NULL)
+	{
+		fprintf(stderr, "arbint_copy: malloc returned null\n");
+	}
+	else
+	{
+		memcpy(dest_value, src->value, bytes_to_copy);
+	}
+
+	dest->value = dest_value;
+
+	// Copy the rest
+	dest->sign   = src->sign;
+	dest->length = src->length;
+
+	return dest;
 }
 
 void
