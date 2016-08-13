@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "minunit.h"
 
@@ -172,7 +173,6 @@ test_arbint_mul()
 	          d.value[0] == 0 && d.value[1] == 0 && d.value[2] == 1951272448 &&
 	              d.value[3] == 1262);
 
-
 	arbint_free_static(&a);
 	arbint_free_static(&b);
 	arbint_free_static(&c);
@@ -309,21 +309,44 @@ test_arbint_add_positive()
 }
 
 static char*
+test_arbint_to_hex()
+{
+	arbint a;
+	arbint_init(&a);
+	str_to_arbint("999999999999999999999999999999999999", &a, 10);
+	char** result = calloc(1, sizeof(char*));
+	arbint_to_hex(&a, result);
+	mu_assert("arbint_to_hex failed (999...999)",
+	          !strcmp(*result, "C097CE7BC90715B34B9F0FFFFFFFFF"));
+
+	str_to_arbint("3735928559", &a, 10);
+	arbint_to_hex(&a, result);
+	mu_assert("arbint_to_hex failed (deadbeef)", !strcmp(*result, "DEADBEEF"));
+	return 0;
+
+	arbint_free_static(&a);
+	free(*result);
+	free(result);
+}
+
+static char*
 all_tests()
 {
 	mu_run_test(test_char_to_digit);
 	mu_run_test(test_sign_to_int);
 	mu_run_test(test_int_to_sign);
 
+	mu_run_test(test_str_to_arbint);
 	mu_run_test(test_arbint_eq);
 	mu_run_test(test_arbint_mul);
 	mu_run_test(test_arbint_add_positive);
-	mu_run_test(test_str_to_arbint);
 	mu_run_test(test_str_mul_eq);
 
 	mu_run_test(test_arbint_copy);
 
 	mu_run_test(test_u64_to_arbint);
+
+	mu_run_test(test_arbint_to_hex);
 	return 0;
 }
 
@@ -331,7 +354,7 @@ int
 main()
 {
 	char* result = all_tests();
-	if (result != NULL)
+	if (result)
 	{
 		printf("%s\n", result);
 	}

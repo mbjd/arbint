@@ -24,3 +24,6 @@ void arbint_mul(arbint* to_mul, uint32_t multiplier);
 
 // Should at some point convert to an actual string in arbitrary base
 void arbint_to_str(arbint* to_convert, char** to_fill /*, uint32_t base*/);
+
+// Allocates and fills *to_fill with a hex representation of to_convert
+void arbint_to_hex(arbint* to_convert, char** to_fill);

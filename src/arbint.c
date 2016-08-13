@@ -203,3 +203,70 @@ arbint_to_str(arbint* to_convert, char** to_fill /*, uint32_t base*/)
 		               i + 1 == to_convert->length ? "" : " + ");
 	}
 }
+
+char
+digit_to_hex(uint32_t digit, size_t position)
+{
+	// Return the POSITION'th hex digit of DIGIT represented as a char
+	if (position)
+		digit >>= (position * 4);
+
+	uint8_t digit_value = digit & 0xF;
+
+	if (digit_value < 10)
+	{
+		return (char) digit_value + '0';
+	}
+	else
+	{
+		return (char) digit_value - 10 + 'A';
+	}
+}
+
+void
+arbint_to_hex(arbint* to_convert, char** to_fill)
+{
+	//
+	// 1 char for each hex digit, and one more for '\0'
+	size_t hex_digits_per_u32 = 8;
+	size_t str_length         = hex_digits_per_u32 * to_convert->length + 1;
+
+	char* result = malloc(str_length * sizeof(char));
+
+	// Iterate backwards over the arbint so we can iterate forwards over
+	// the string, and in order to leave out leading zeroes
+	size_t arbint_pos = to_convert->length * hex_digits_per_u32;
+	size_t str_pos    = 0;
+	char hex_repr;
+	bool leading_zero = true;
+	while (arbint_pos--)
+	{
+		// Get the ARBINT_POS'th nibble of to_convert as a hex digit
+		size_t which_digit    = arbint_pos / hex_digits_per_u32;
+		size_t where_in_digit = arbint_pos % hex_digits_per_u32;
+		hex_repr = digit_to_hex(to_convert->value[which_digit], where_in_digit);
+
+		// The first digit which isn't 0 will finish the leading zero section
+		if (hex_repr != '0')
+			leading_zero = false;
+
+		// Only if we're past that section we need to put the number in the string
+		if (!leading_zero)
+		{
+			result[str_pos] = hex_repr;
+			str_pos++;
+		}
+	}
+
+	// Append a null delimiter
+	result[str_pos++] = '\0';
+
+	// If there were leading zeroes, reallocate the string so that the
+	// space after the number isn't wasted
+	if (str_pos < str_length)
+	{
+		result = realloc(result, str_pos + 1);
+	}
+
+	*to_fill = result;
+}
