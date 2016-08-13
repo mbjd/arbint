@@ -172,6 +172,7 @@ test_arbint_mul()
 	          d.value[0] == 0 && d.value[1] == 0 && d.value[2] == 1951272448 &&
 	              d.value[3] == 1262);
 
+
 	arbint_free_static(&a);
 	arbint_free_static(&b);
 	arbint_free_static(&c);
@@ -273,7 +274,7 @@ test_arbint_copy()
 }
 
 static char*
-test_arbint_add()
+test_arbint_add_positive()
 {
 	arbint a;
 	arbint b;
@@ -286,7 +287,7 @@ test_arbint_add()
 	str_to_arbint("200", &b, 10);
 	str_to_arbint("300", &expected, 10);
 
-	arbint* result = arbint_add(&a, &b);
+	arbint* result = arbint_add_positive(&a, &b);
 
 	mu_assert("arbint_add doesn't work with short numbers", arbint_eq(&expected, result));
 	arbint_free(result);
@@ -295,7 +296,7 @@ test_arbint_add()
 	str_to_arbint("444444444444444444444444444444444444", &b, 10);
 	str_to_arbint("666666666666666666666666666666666666", &expected, 10);
 
-	result = arbint_add(&a, &b);
+	result = arbint_add_positive(&a, &b);
 
 	mu_assert("arbint_add doesn't work with long numbers", arbint_eq(&expected, result));
 
@@ -316,7 +317,7 @@ all_tests()
 
 	mu_run_test(test_arbint_eq);
 	mu_run_test(test_arbint_mul);
-	mu_run_test(test_arbint_add);
+	mu_run_test(test_arbint_add_positive);
 	mu_run_test(test_str_to_arbint);
 	mu_run_test(test_str_mul_eq);
 

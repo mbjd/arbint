@@ -62,11 +62,17 @@ add_to_arbint(arbint* to_add, uint32_t value, size_t position)
 }
 
 arbint*
-arbint_add(arbint* a, arbint* b)
+arbint_add_positive(arbint* a, arbint* b)
 {
+	// TODO make a subtraction function and call it here if one of them is negative
+	if (a->sign == NEGATIVE || b->sign == NEGATIVE)
+	{
+		fprintf(stderr, "arbint_add_positive ignores the sign of numbers");
+		exit(22);
+	}
 	if (a->length < b->length)
 	{
-		return arbint_add(b, a);
+		return arbint_add_positive(b, a);
 	}
 
 	// If we copy the longer one and add the shorter one, adding will be faster
