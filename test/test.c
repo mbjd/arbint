@@ -107,11 +107,13 @@ test_str_to_arbint()
 	mu_assert("str_to_arbint with UINT32_MAX failed",
 	          a.value[0] == 0 && a.value[1] == 1 && a.length == 2 && a.sign == POSITIVE);
 
+	arbint_free_value(&a);
 	arbint_init(&a);
 	str_to_arbint("-4294967296", &a, 10);
 	mu_assert("str_to_arbint with -UINT32_MAX failed",
 	          a.value[0] == 0 && a.value[1] == 1 && a.length == 2 && a.sign == NEGATIVE);
 
+	arbint_free_value(&a);
 	arbint_init(&a);
 	str_to_arbint("+792384103083241340432014773910347139419741", &a, 10);
 	mu_assert("str_to_arbint with random huge value and leading + failed",
@@ -119,6 +121,7 @@ test_str_to_arbint()
 	              a.value[2] == 3284471345 && a.value[3] == 2609588367 &&
 	              a.value[4] == 2328 && a.length == 5 && a.sign == POSITIVE);
 
+	arbint_free_value(&a);
 	arbint_init(&a);
 	str_to_arbint("-792384103083241340432014773910347139419741", &a, 10);
 	mu_assert("str_to_arbint with -(random huge value) failed",
@@ -126,6 +129,30 @@ test_str_to_arbint()
 	              a.value[2] == 3284471345 && a.value[3] == 2609588367 &&
 	              a.value[4] == 2328 && a.length == 5 && a.sign == NEGATIVE);
 
+	arbint_free_value(&a);
+	arbint_init(&a);
+	// 116149714575680328862165199336710216176981 in base 10
+	str_to_arbint("-010101010101010101010101010101010101010101010101010101010101010101010"
+	              "101010101010101010101010101010101010101010101010101010101010101010101",
+	              &a, 2);
+	uint32_t x = 1431655765;
+	mu_assert("str_to_arbint with base 2 failed",
+	          a.length == 5 && a.value[0] == x && a.value[1] == x && a.value[2] == x &&
+	              a.value[3] == x && a.value[4] == 341 && a.sign == NEGATIVE);
+
+	arbint_free_value(&a);
+	arbint_init(&a);
+	str_to_arbint("2234437233536512670610467177347354552643414515707450555642435166545370"
+	              "737574172732620750174516443207",
+	              &a, 8);
+	mu_assert("str_to_arbint with base 8 failed",
+	          a.length == 10 && a.value[0] == 3845801607 && a.value[1] == 1991384707 &&
+	              a.value[2] == 3820977213 && a.value[3] == 2745658155 &&
+	              a.value[4] == 2401810152 && a.value[5] == 1513645367 &&
+	              a.value[6] == 2138290989 && a.value[7] == 2915443310 &&
+	              a.value[8] == 2410081236 && a.value[9] == 1180);
+
+	arbint_free_value(&a);
 	arbint_init(&a);
 
 	return 0;
@@ -172,9 +199,9 @@ test_arbint_mul()
 	arbint d = {.value = value_array_d, .length = 3, .sign = POSITIVE};
 	arbint_mul(&d, 1291);
 	mu_assert("arbint_mul by 1291 didn't reallocate correctly", d.length == 4);
-	mu_assert("arbint_mul by 1291 failed",
-	          d.value[0] == 0 && d.value[1] == 0 && d.value[2] == 1951272448 &&
-	              d.value[3] == 1262);
+	mu_assert("arbint_mul by 1291 failed", d.value[0] == 0 && d.value[1] == 0 &&
+	                                           d.value[2] == 1951272448 &&
+	                                           d.value[3] == 1262);
 
 	arbint_free_value(&a);
 	arbint_free_value(&b);
@@ -220,17 +247,15 @@ test_u64_to_arbint()
 	// Test uninitialised
 	arbint a;
 	u64_to_arbint(9120311729134, &a);
-	mu_assert("u64_to_arbint failed (1)",
-	          a.length == 2 && a.value[0] == 2096159726 && a.value[1] == 2123 &&
-	              a.sign == POSITIVE);
+	mu_assert("u64_to_arbint failed (1)", a.length == 2 && a.value[0] == 2096159726 &&
+	                                          a.value[1] == 2123 && a.sign == POSITIVE);
 
 	// Test initialised
 	arbint b;
 	arbint_init(&b);
 	u64_to_arbint(9120311729134, &b);
-	mu_assert("u64_to_arbint failed (2)",
-	          b.length == 2 && b.value[0] == 2096159726 && b.value[1] == 2123 &&
-	              b.sign == POSITIVE);
+	mu_assert("u64_to_arbint failed (2)", b.length == 2 && b.value[0] == 2096159726 &&
+	                                          b.value[1] == 2123 && b.sign == POSITIVE);
 
 	// Test with 2^32 - 1
 	arbint c;

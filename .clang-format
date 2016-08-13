@@ -16,8 +16,8 @@ AlignConsecutiveAssignments: true
 ReflowComments: true
 
 AlignOperands: true
-BinPackArguments: false
-BinPackParameters: false
+BinPackArguments: true
+BinPackParameters: true
 SpaceAfterCStyleCast: true
 AlignEscapedNewlinesLeft: true
 

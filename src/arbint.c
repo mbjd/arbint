@@ -139,10 +139,8 @@ str_to_arbint(char* input_str, arbint* to_fill, uint32_t base)
 
 		if (digit_val == -1)
 		{
-			fprintf(stderr,
-			        "str_to_arbint: Invalid character '%c' for base %d",
-			        input_str[position],
-			        base);
+			fprintf(stderr, "str_to_arbint: Invalid character '%c' for base %d",
+			        input_str[position], base);
 			exit(EINVAL); // 22 Invalid argument
 		}
 
@@ -198,10 +196,7 @@ arbint_to_str(arbint* to_convert, char** to_fill /*, uint32_t base*/)
 	char* str = *to_fill;
 	for (size_t i = 0; i < to_convert->length; i++)
 	{
-		str += sprintf(str,
-		               "%u * ((2^32)^%lu) %s",
-		               to_convert->value[i],
-		               i,
+		str += sprintf(str, "%u * ((2^32)^%lu) %s", to_convert->value[i], i,
 		               i + 1 == to_convert->length ? "" : " + ");
 	}
 }
