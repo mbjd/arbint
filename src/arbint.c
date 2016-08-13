@@ -82,7 +82,7 @@ arbint_free(arbint* to_free)
 }
 
 void
-arbint_free_static(arbint* to_free)
+arbint_free_value(arbint* to_free)
 {
 	free(to_free->value);
 }
@@ -103,10 +103,12 @@ str_to_arbint(char* input_str, arbint* to_fill, uint32_t base)
 	if (base < 2)
 	{
 		fprintf(stderr, "str_to_arbint: Base must be between 2 and 36\n");
+		exit(22);
 	}
 	else if (base > 36)
 	{
 		fprintf(stderr, "str_to_arbint: Base must be between 2 and 36\n");
+		exit(22);
 	}
 	// TODO: Trim whitespace
 

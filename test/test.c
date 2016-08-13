@@ -119,11 +119,14 @@ test_str_to_arbint()
 	              a.value[2] == 3284471345 && a.value[3] == 2609588367 &&
 	              a.value[4] == 2328 && a.length == 5 && a.sign == POSITIVE);
 
+	arbint_init(&a);
 	str_to_arbint("-792384103083241340432014773910347139419741", &a, 10);
 	mu_assert("str_to_arbint with -(random huge value) failed",
 	          a.value[0] == 313953885 && a.value[1] == 3019150336 &&
 	              a.value[2] == 3284471345 && a.value[3] == 2609588367 &&
 	              a.value[4] == 2328 && a.length == 5 && a.sign == NEGATIVE);
+
+	arbint_init(&a);
 
 	return 0;
 }
@@ -173,10 +176,10 @@ test_arbint_mul()
 	          d.value[0] == 0 && d.value[1] == 0 && d.value[2] == 1951272448 &&
 	              d.value[3] == 1262);
 
-	arbint_free_static(&a);
-	arbint_free_static(&b);
-	arbint_free_static(&c);
-	arbint_free_static(&d);
+	arbint_free_value(&a);
+	arbint_free_value(&b);
+	arbint_free_value(&c);
+	arbint_free_value(&d);
 
 	return 0;
 }
@@ -205,8 +208,8 @@ test_str_mul_eq()
 	arbint_mul(&b, 100000000);
 	mu_assert("either arbint_eq or arbint_mul doesn't work (2)", arbint_eq(&b, &c));
 
-	arbint_free_static(&b);
-	arbint_free_static(&c);
+	arbint_free_value(&b);
+	arbint_free_value(&c);
 
 	return 0;
 }
@@ -241,10 +244,10 @@ test_u64_to_arbint()
 	mu_assert("u64_to_arbint with UINT64_MAX failed",
 	          d.length == 2 && d.value[0] == UINT32_MAX && d.value[1] == UINT32_MAX);
 
-	arbint_free_static(&a);
-	arbint_free_static(&b);
-	arbint_free_static(&c);
-	arbint_free_static(&d);
+	arbint_free_value(&a);
+	arbint_free_value(&b);
+	arbint_free_value(&c);
+	arbint_free_value(&d);
 
 	return 0;
 }
@@ -300,9 +303,9 @@ test_arbint_add_positive()
 
 	mu_assert("arbint_add doesn't work with long numbers", arbint_eq(&expected, result));
 
-	arbint_free_static(&a);
-	arbint_free_static(&b);
-	arbint_free_static(&expected);
+	arbint_free_value(&a);
+	arbint_free_value(&b);
+	arbint_free_value(&expected);
 	arbint_free(result);
 
 	return 0;
@@ -324,7 +327,7 @@ test_arbint_to_hex()
 	mu_assert("arbint_to_hex failed (deadbeef)", !strcmp(*result, "DEADBEEF"));
 	return 0;
 
-	arbint_free_static(&a);
+	arbint_free_value(&a);
 	free(*result);
 	free(result);
 }

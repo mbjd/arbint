@@ -17,7 +17,7 @@ void arbint_init(arbint* new_arbint);
 void arbint_free(arbint* to_free);
 
 // Deallocates the value only, for when the struct was statically allocated.
-void arbint_free_static(arbint* to_free);
+void arbint_free_value(arbint* to_free);
 
 // Multiplies an arbint by a 32-bit unsigned int
 void arbint_mul(arbint* to_mul, uint32_t multiplier);
