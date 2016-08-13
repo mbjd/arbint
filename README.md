@@ -23,6 +23,11 @@ I'm happy to hear about suggestions, issues and ideas.
 
 ## Todo list
 
+- Decrease length in `str_to_arbint` if it's unnecessarily large
+- Test `str_to_arbint` with bases other than 10
+- Remove confusion between `arbint` and `arbint*`
+	- Have a typedef to define the basic type as a pointer to the actual
+	  struct
 - Adding a negative number should result in subtraction
 - Put all 'public' functions and typedefs in a single header
 - Fix segfault in `arbint_eq` when one of the structs is uninitialised
@@ -30,8 +35,9 @@ I'm happy to hear about suggestions, issues and ideas.
 	  gibberish. So my solution is to always call arbint_init on each
 	  arbint right after creation.
 - Construct `arbint` structs from strings or integers
-	- From strings: done with str\_to\_arbint, from ints is the easy part
+	- From strings: done with `str_to_arbint`, from ints is the easy part
 - Implement basic math functions with `arbint` structs and 'normal' numbers
+	- Done: Add u32 to arbint, add arbint to arbint, multiply arbint by u32
 - Return error codes if something goes wrong instead of printing a message
   to stderr and exiting
 
