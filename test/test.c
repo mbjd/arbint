@@ -59,12 +59,10 @@ test_arbint_eq()
 
 	arbint a = {.value = test_array_a, .length = 3, .sign = POSITIVE};
 	arbint b = {.value = test_array_b, .length = 3, .sign = POSITIVE};
-	mu_assert("Completely equal arbints aren't equal",
-	          arbint_eq(&a, &b) == true);
+	mu_assert("Completely equal arbints aren't equal", arbint_eq(&a, &b) == true);
 
 	a.value = test_array_c;
-	mu_assert("Different arbints with same length are equal",
-	          arbint_eq(&a, &b) == false);
+	mu_assert("Different arbints with same length are equal", arbint_eq(&a, &b) == false);
 
 	a.value  = test_array_d;
 	a.length = 2;
@@ -82,14 +80,12 @@ test_arbint_eq()
 	b.length = 1;
 	b.sign   = NEGATIVE;
 
-	mu_assert("Arbints = 0 with different sign aren't equal",
-	          arbint_eq(&a, &b) == true);
+	mu_assert("Arbints = 0 with different sign aren't equal", arbint_eq(&a, &b) == true);
 
 	a.value = one_array;
 	b.value = one_array;
 
-	mu_assert("Arbints = 1 with different sign are equal",
-	          arbint_eq(&a, &b) == false);
+	mu_assert("Arbints = 1 with different sign are equal", arbint_eq(&a, &b) == false);
 
 	arbint c;
 	arbint_init(&c);
@@ -108,14 +104,12 @@ test_str_to_arbint()
 	arbint_init(&a);
 	str_to_arbint("4294967296", &a, 10);
 	mu_assert("str_to_arbint with UINT32_MAX failed",
-	          a.value[0] == 0 && a.value[1] == 1 && a.length == 2 &&
-	              a.sign == POSITIVE);
+	          a.value[0] == 0 && a.value[1] == 1 && a.length == 2 && a.sign == POSITIVE);
 
 	arbint_init(&a);
 	str_to_arbint("-4294967296", &a, 10);
 	mu_assert("str_to_arbint with -UINT32_MAX failed",
-	          a.value[0] == 0 && a.value[1] == 1 && a.length == 2 &&
-	              a.sign == NEGATIVE);
+	          a.value[0] == 0 && a.value[1] == 1 && a.length == 2 && a.sign == NEGATIVE);
 
 	arbint_init(&a);
 	str_to_arbint("+792384103083241340432014773910347139419741", &a, 10);
@@ -152,8 +146,7 @@ test_arbint_mul()
 	arbint b = {.value = value_array_b, .length = 3, .sign = POSITIVE};
 	arbint_mul(&b, 666);
 	mu_assert("arbint_mul by 666 failed",
-	          b.value[0] == 4294966630 && b.value[1] == 4294967295 &&
-	              b.value[2] == 665);
+	          b.value[0] == 4294966630 && b.value[1] == 4294967295 && b.value[2] == 665);
 
 	// This test should put the most significant digit close to overflowing,
 	// but should not allocate new space in c.value.
@@ -163,11 +156,9 @@ test_arbint_mul()
 	value_array_c[2]        = 0;
 	arbint c = {.value = value_array_c, .length = 3, .sign = POSITIVE};
 	arbint_mul(&c, UINT32_MAX);
-	mu_assert("arbint_mul by UINT32_MAX reallocated unnecessarily",
-	          c.length == 3);
+	mu_assert("arbint_mul by UINT32_MAX reallocated unnecessarily", c.length == 3);
 	mu_assert("arbint_mul by UINT32_MAX failed",
-	          c.value[0] == 1 && c.value[1] == 4294967295 &&
-	              c.value[2] == 4294967294);
+	          c.value[0] == 1 && c.value[1] == 4294967295 && c.value[2] == 4294967294);
 
 	// This test should reallocate c.value to fit the larger value
 	uint32_t* value_array_d = calloc(3, sizeof(uint32_t));
@@ -202,8 +193,7 @@ test_str_mul_eq()
 	str_to_arbint("9999999999999999999999990", &c, 10);
 	// Multiply so that c = b
 	arbint_mul(&b, 10);
-	mu_assert("either arbint_eq or arbint_mul doesn't work (1)",
-	          arbint_eq(&b, &c));
+	mu_assert("either arbint_eq or arbint_mul doesn't work (1)", arbint_eq(&b, &c));
 
 	arbint_init(&b);
 	arbint_init(&c);
@@ -212,8 +202,7 @@ test_str_mul_eq()
 	str_to_arbint("-7777777777777777777777777777777777777700000000", &c, 10);
 	// Multiply so that c = b
 	arbint_mul(&b, 100000000);
-	mu_assert("either arbint_eq or arbint_mul doesn't work (2)",
-	          arbint_eq(&b, &c));
+	mu_assert("either arbint_eq or arbint_mul doesn't work (2)", arbint_eq(&b, &c));
 
 	arbint_free_static(&b);
 	arbint_free_static(&c);
@@ -249,8 +238,7 @@ test_u64_to_arbint()
 	arbint d;
 	u64_to_arbint(UINT64_MAX, &d);
 	mu_assert("u64_to_arbint with UINT64_MAX failed",
-	          d.length == 2 && d.value[0] == UINT32_MAX &&
-	              d.value[1] == UINT32_MAX);
+	          d.length == 2 && d.value[0] == UINT32_MAX && d.value[1] == UINT32_MAX);
 
 	arbint_free_static(&a);
 	arbint_free_static(&b);
@@ -300,7 +288,7 @@ test_arbint_add()
 
 	arbint* result = arbint_add(&a, &b);
 
-	mu_assert("arbint_add doesn't work", arbint_eq(&expected, result));
+	mu_assert("arbint_add doesn't work with short numbers", arbint_eq(&expected, result));
 	arbint_free(result);
 
 	str_to_arbint("222222222222222222222222222222222222", &a, 10);

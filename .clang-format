@@ -21,7 +21,7 @@ BinPackParameters: false
 SpaceAfterCStyleCast: true
 AlignEscapedNewlinesLeft: true
 
-ColumnLimit: 80
+ColumnLimit: 90
 
 UseTab: ForIndentation
 TabWidth: 4

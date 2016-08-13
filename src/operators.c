@@ -26,9 +26,8 @@ add_to_arbint(arbint* to_add, uint32_t value, size_t position)
 	if (position >= to_add->length)
 	{
 		// Enough space so that position + the next digit will be in the array
-		size_t new_length = position + 1;
-		uint32_t* new_value =
-		    realloc(to_add->value, new_length * sizeof(uint32_t));
+		size_t new_length   = position + 1;
+		uint32_t* new_value = realloc(to_add->value, new_length * sizeof(uint32_t));
 		if (new_value == NULL)
 		{
 			fprintf(stderr, "add_to_arbint: failed to realloc\n");
@@ -181,8 +180,7 @@ arbint_eq(arbint* a, arbint* b)
 
 		// See if we can already spot a difference in the 'digits' that are
 		// present in both numbers.
-		bool tmp_result =
-		    arbint_eq_up_to_length(shorter, longer, shorter_length);
+		bool tmp_result = arbint_eq_up_to_length(shorter, longer, shorter_length);
 
 		if (!tmp_result)
 		{

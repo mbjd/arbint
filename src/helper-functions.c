@@ -135,9 +135,7 @@ print_arbint(arbint* to_print)
 	printf("uint32_t value_array[%lu] = {", to_print->length);
 	for (size_t i = 0; i < (to_print->length); i++)
 	{
-		printf("%u%s",
-		       (to_print->value)[i],
-		       i + 1 == to_print->length ? "" : ", ");
+		printf("%u%s", (to_print->value)[i], i + 1 == to_print->length ? "" : ", ");
 	}
 	printf("};\n");
 
