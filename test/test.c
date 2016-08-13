@@ -365,14 +365,14 @@ all_tests()
 	mu_run_test(test_int_to_sign);
 
 	mu_run_test(test_str_to_arbint);
+	mu_run_test(test_u64_to_arbint);
+
 	mu_run_test(test_arbint_eq);
 	mu_run_test(test_arbint_mul);
-	mu_run_test(test_arbint_add_positive);
 	mu_run_test(test_str_mul_eq);
+	mu_run_test(test_arbint_add_positive);
 
 	mu_run_test(test_arbint_copy);
-
-	mu_run_test(test_u64_to_arbint);
 
 	mu_run_test(test_arbint_to_hex);
 	return 0;
