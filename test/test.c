@@ -367,7 +367,8 @@ test_arbint_to_hex()
 	arbint_init(&a);
 	str_to_arbint("-deadbeefDEADBEEFdeadbeefDEADBEEF", &a, 16);
 	arbint_to_hex(&a, result);
-	mu_assert("arbint_to_hex failed (0xdeadbeefDEADBEEF...)", !strcmp(*result, "-DEADBEEFDEADBEEFDEADBEEFDEADBEEF"));
+	mu_assert("arbint_to_hex failed (0xdeadbeefDEADBEEF...)",
+	          !strcmp(*result, "-DEADBEEFDEADBEEFDEADBEEFDEADBEEF"));
 	free(*result);
 
 	arbint_free_value(&a);
