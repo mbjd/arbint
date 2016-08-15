@@ -342,19 +342,37 @@ test_arbint_to_hex()
 	arbint a;
 	arbint_init(&a);
 	str_to_arbint("999999999999999999999999999999999999", &a, 10);
-	char** result = calloc(1, sizeof(char*));
+	char** result = malloc(sizeof(char*));
 	arbint_to_hex(&a, result);
 	mu_assert("arbint_to_hex failed (999...999)",
 	          !strcmp(*result, "C097CE7BC90715B34B9F0FFFFFFFFF"));
-
-	str_to_arbint("3735928559", &a, 10);
-	arbint_to_hex(&a, result);
-	mu_assert("arbint_to_hex failed (deadbeef)", !strcmp(*result, "DEADBEEF"));
-	return 0;
+	free(*result);
 
 	arbint_free_value(&a);
+	arbint_init(&a);
+	str_to_arbint("-999999999999999999999999999999999999", &a, 10);
+	arbint_to_hex(&a, result);
+	mu_assert("arbint_to_hex failed (-999...999)",
+	          !strcmp(*result, "-C097CE7BC90715B34B9F0FFFFFFFFF"));
 	free(*result);
+
+	arbint_free_value(&a);
+	arbint_init(&a);
+	str_to_arbint("DeaDBeEF", &a, 16);
+	arbint_to_hex(&a, result);
+	mu_assert("arbint_to_hex failed (0xDEADBEEF)", !strcmp(*result, "DEADBEEF"));
+	free(*result);
+
+	arbint_free_value(&a);
+	arbint_init(&a);
+	str_to_arbint("-deadbeefDEADBEEFdeadbeefDEADBEEF", &a, 16);
+	arbint_to_hex(&a, result);
+	mu_assert("arbint_to_hex failed (0xdeadbeefDEADBEEF...)", !strcmp(*result, "-DEADBEEFDEADBEEFDEADBEEFDEADBEEF"));
+	free(*result);
+
+	arbint_free_value(&a);
 	free(result);
+	return 0;
 }
 
 static char*

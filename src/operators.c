@@ -15,6 +15,8 @@ add_to_arbint(arbint* to_add, uint32_t value, size_t position)
 	// Add (value * (2^32) ^ position) to an arbint.
 	// This adds value to to_add->value[position], and if there's an overflow,
 	// it recursively adds the overflow to the more significant digit.
+	// If the overflow goes beyond the length of to_add, its value is reallocated
+	// to fit the new value.
 
 	if (value == 0)
 	{

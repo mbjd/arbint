@@ -223,10 +223,13 @@ digit_to_hex(uint32_t digit, size_t position)
 void
 arbint_to_hex(arbint* to_convert, char** to_fill)
 {
-	//
 	// 1 char for each hex digit, and one more for '\0'
 	size_t hex_digits_per_u32 = 8;
 	size_t str_length         = hex_digits_per_u32 * to_convert->length + 1;
+	if (to_convert->sign == NEGATIVE)
+	{
+		str_length++;
+	}
 
 	char* result = malloc(str_length * sizeof(char));
 
@@ -234,8 +237,14 @@ arbint_to_hex(arbint* to_convert, char** to_fill)
 	// the string, and in order to leave out leading zeroes
 	size_t arbint_pos = to_convert->length * hex_digits_per_u32;
 	size_t str_pos    = 0;
-	char hex_repr;
 	bool leading_zero = true;
+	char hex_repr;
+
+	if (to_convert->sign == NEGATIVE)
+	{
+		result[str_pos] = '-';
+		str_pos++;
+	}
 	while (arbint_pos--)
 	{
 		// Get the ARBINT_POS'th nibble of to_convert as a hex digit
@@ -245,7 +254,9 @@ arbint_to_hex(arbint* to_convert, char** to_fill)
 
 		// The first digit which isn't 0 will finish the leading zero section
 		if (hex_repr != '0')
+		{
 			leading_zero = false;
+		}
 
 		// Only if we're past that section we need to put the number in the string
 		if (!leading_zero)
@@ -260,6 +271,8 @@ arbint_to_hex(arbint* to_convert, char** to_fill)
 
 	// If there were leading zeroes, reallocate the string so that the
 	// space after the number isn't wasted
+	// TODO determine the amount of leading zeroes at the beginning and already allocate
+	// no more bytes than necessary
 	if (str_pos < str_length)
 	{
 		result = realloc(result, str_pos + 1);
