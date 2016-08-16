@@ -13,6 +13,9 @@ void u64_to_arbint(uint64_t value, arbint* to_fill);
 // Initialise to +0
 void arbint_init(arbint* new_arbint);
 
+// Allocate an arbint and return a pointer to it
+arbint* arbint_new(void);
+
 // Deallocates an arbint struct and its value.
 void arbint_free(arbint* to_free);
 

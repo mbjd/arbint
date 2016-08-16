@@ -97,6 +97,14 @@ arbint_init(arbint* new_arbint)
 	new_arbint->sign   = POSITIVE;
 }
 
+arbint*
+arbint_new(void)
+{
+	arbint* new_arbint = calloc(1, sizeof(arbint));
+	arbint_init(new_arbint);
+	return new_arbint;
+}
+
 void
 str_to_arbint(char* input_str, arbint* to_fill, uint32_t base)
 {
