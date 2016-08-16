@@ -119,6 +119,35 @@ arbint_copy(arbint* src)
 	return dest;
 }
 
+size_t
+arbint_highest_digit(arbint* input)
+{
+	// Returns the position of the most significant non-zero digit
+	size_t position = input->length - 1;
+	while (input->value[position] == 0)
+		position--;
+	return position;
+}
+
+void
+arbint_trim(arbint* to_trim)
+{
+	// Remove all leading zeroes
+	size_t last_leading_zero = 1 + arbint_highest_digit(to_trim);
+	size_t bytes_to_keep     = last_leading_zero * sizeof(uint32_t);
+	uint32_t* new_value      = realloc(to_trim->value, bytes_to_keep);
+	if (new_value)
+	{
+		to_trim->value  = new_value;
+		to_trim->length = last_leading_zero;
+	}
+	else
+	{
+		fprintf(stderr, "Failed to realloc in arbint_trim\n");
+		exit(12);
+	}
+}
+
 void
 print_arbint(arbint* to_print)
 {

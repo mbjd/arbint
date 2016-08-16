@@ -377,22 +377,71 @@ test_arbint_to_hex()
 }
 
 static char*
+test_highest_digit()
+{
+
+	uint32_t value[] = {10, 0, 0, 0, 10, 0, 0, 0};
+	arbint a = {.value = value, .length = 8, .sign = POSITIVE};
+	mu_assert("arbint_highest_digit failed (1)", arbint_highest_digit(&a) == 4);
+
+	str_to_arbint("-deadd00d121337", &a, 16);
+	mu_assert("arbint_highest_digit failed (2)", arbint_highest_digit(&a) == 1);
+	return 0;
+}
+
+static char*
+test_trim()
+{
+	arbint a;
+	arbint_init(&a);
+
+	str_to_arbint("9999999999999999999999999999999999999", &a, 10);
+	mu_assert("str_to_arbint in test_trim failed", a.length == 4);
+
+	str_to_arbint("4294967296", &a, 10);
+	mu_assert("str_to_arbint changed length", a.length == 4);
+
+	arbint_trim(&a);
+	mu_assert("arbint_trim failed to reduce length", a.length == 2);
+
+	arbint_free_value(&a);
+
+	return 0;
+}
+
+static char*
+test_arbint_new()
+{
+	arbint* a = arbint_new();
+	mu_assert("arbint_new returned NULL pointer", a != NULL);
+	return 0;
+}
+
+static char*
 all_tests()
 {
+	// Basics
 	mu_run_test(test_char_to_digit);
 	mu_run_test(test_sign_to_int);
 	mu_run_test(test_int_to_sign);
+	mu_run_test(test_highest_digit);
+	mu_run_test(test_trim);
 
+	// Constructors/parsing
+	mu_run_test(test_arbint_new);
 	mu_run_test(test_str_to_arbint);
 	mu_run_test(test_u64_to_arbint);
 
+	// Operators
 	mu_run_test(test_arbint_eq);
 	mu_run_test(test_arbint_mul);
 	mu_run_test(test_str_mul_eq);
 	mu_run_test(test_arbint_add_positive);
 
+	// Copy
 	mu_run_test(test_arbint_copy);
 
+	// Output
 	mu_run_test(test_arbint_to_hex);
 	return 0;
 }
