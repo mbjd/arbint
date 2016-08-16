@@ -23,7 +23,6 @@ I'm happy to hear about suggestions, issues and ideas.
 
 ## Todo list
 
-- Decrease length in `str_to_arbint` if it's unnecessarily large
 - Remove confusion between `arbint` and `arbint*`
 	- Have a typedef to define the basic type as a pointer to the actual
 	  struct
