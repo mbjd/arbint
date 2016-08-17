@@ -34,12 +34,16 @@ run-tests: test
 
 # Link all .o files together with test.o to make a test executable
 .PHONY: test
-test: $(object_dir)/test.o $(so_name)
-	$(CC) $(CFLAGS) -L. -larbint -o $(test_executable) $<
+test: $(object_dir)/test.o $(OBJS) $(so_name)
+	$(CC) $(CFLAGS) -L. -larbint -o $(test_executable) $< $(OBJS)
 
 # Put an object file of test/test.c in obj/test.o
-$(object_dir)/test.o: $(test_dir)/test.c $(test_dir)/minunit.h $(HEADERS)
+$(object_dir)/test.o: $(test_dir)/test.c $(test_dir)/minunit.h $(HEADERS) objdir
 	$(CC) $(CFLAGS) -I $(test_dir) -c $< -o $@
+
+.PHONY: objdir
+objdir:
+	@mkdir -p $(object_dir)
 
 # All obj files except test.o are formed from from the corresponding .c and .h file.
 # To be sure we have all headers as prerequisites, which isn't really necessary but
