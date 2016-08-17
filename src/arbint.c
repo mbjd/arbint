@@ -12,7 +12,7 @@
 #include "arbint.h"
 
 void
-arbint_mul(arbint* to_mul, uint32_t multiplier)
+arbint_mul(arbint to_mul, uint32_t multiplier)
 {
 	// Multiply an arbint by any 32-bit unsigned integer
 
@@ -75,20 +75,20 @@ arbint_mul(arbint* to_mul, uint32_t multiplier)
 }
 
 void
-arbint_free(arbint* to_free)
+arbint_free(arbint to_free)
 {
 	free(to_free->value);
 	free(to_free);
 }
 
 void
-arbint_free_value(arbint* to_free)
+arbint_free_value(arbint to_free)
 {
 	free(to_free->value);
 }
 
 void
-arbint_init(arbint* new_arbint)
+arbint_init(arbint new_arbint)
 {
 	uint32_t* value_array = calloc(1, sizeof(uint32_t));
 
@@ -97,16 +97,32 @@ arbint_init(arbint* new_arbint)
 	new_arbint->sign   = POSITIVE;
 }
 
-arbint*
+arbint
 arbint_new(void)
 {
-	arbint* new_arbint = calloc(1, sizeof(arbint));
-	arbint_init(new_arbint);
+	return arbint_new_length(1);
+}
+
+arbint
+arbint_new_length(size_t length)
+{
+	arbint new_arbint     = calloc(1, sizeof(arbint_struct));
+	uint32_t* value_array = calloc(length, sizeof(arbint_struct));
+	new_arbint->value     = value_array;
+	new_arbint->length    = length;
+	new_arbint->sign      = POSITIVE;
+
 	return new_arbint;
 }
 
+arbint
+arbint_new_empty()
+{
+	return calloc(1, sizeof(arbint_struct));
+}
+
 void
-str_to_arbint(char* input_str, arbint* to_fill, uint32_t base)
+str_to_arbint(char* input_str, arbint to_fill, uint32_t base)
 {
 	if (base < 2)
 	{
@@ -165,7 +181,7 @@ str_to_arbint(char* input_str, arbint* to_fill, uint32_t base)
 }
 
 void
-u64_to_arbint(uint64_t value, arbint* to_fill)
+u64_to_arbint(uint64_t value, arbint to_fill)
 {
 	to_fill->sign = POSITIVE;
 
@@ -190,7 +206,7 @@ u64_to_arbint(uint64_t value, arbint* to_fill)
 }
 
 void
-arbint_to_str(arbint* to_convert, char** to_fill /*, uint32_t base*/)
+arbint_to_str(arbint to_convert, char** to_fill /*, uint32_t base*/)
 {
 	// TODO Check if 2 <= base <= 36
 	// TODO actually support different bases
@@ -229,7 +245,7 @@ digit_to_hex(uint32_t digit, size_t position)
 }
 
 void
-arbint_to_hex(arbint* to_convert, char** to_fill)
+arbint_to_hex(arbint to_convert, char** to_fill)
 {
 	// 1 char for each hex digit, and one more for '\0'
 	size_t hex_digits_per_u32 = 8;

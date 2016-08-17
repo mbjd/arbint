@@ -10,7 +10,7 @@
 #include "operators.h"
 
 void
-add_to_arbint(arbint* to_add, uint32_t value, size_t position)
+add_to_arbint(arbint to_add, uint32_t value, size_t position)
 {
 	// Add (value * (2^32) ^ position) to an arbint.
 	// This adds value to to_add->value[position], and if there's an overflow,
@@ -63,8 +63,8 @@ add_to_arbint(arbint* to_add, uint32_t value, size_t position)
 	}
 }
 
-arbint*
-arbint_add_positive(arbint* a, arbint* b)
+arbint
+arbint_add_positive(arbint a, arbint b)
 {
 	// TODO make a subtraction function and call it here if one of them is negative
 	if (a->sign == NEGATIVE || b->sign == NEGATIVE)
@@ -79,7 +79,7 @@ arbint_add_positive(arbint* a, arbint* b)
 
 	// If we copy the longer one and add the shorter one, adding will be faster
 	// and it's less likely that we have to reallocate while adding
-	arbint* result = arbint_copy(a);
+	arbint result = arbint_copy(a);
 
 	for (size_t i = 0; i < b->length; i++)
 	{
@@ -90,7 +90,7 @@ arbint_add_positive(arbint* a, arbint* b)
 }
 
 static bool
-arbint_eq_up_to_length(arbint* a, arbint* b, size_t length)
+arbint_eq_up_to_length(arbint a, arbint b, size_t length)
 {
 	// This function assumes that both a and b have at least the given length.
 	// It is intended to be called from arbint_eq, which does the necessary
@@ -106,7 +106,7 @@ arbint_eq_up_to_length(arbint* a, arbint* b, size_t length)
 }
 
 static bool
-arbint_is_zero(arbint* a)
+arbint_is_zero(arbint a)
 {
 	size_t length = a->length;
 	for (size_t i = 0; i < length; i++)
@@ -120,7 +120,7 @@ arbint_is_zero(arbint* a)
 }
 
 bool
-arbint_eq(arbint* a, arbint* b)
+arbint_eq(arbint a, arbint b)
 {
 	// Check two arbints for numerical equality
 	// Returns false if different, true if equal
@@ -167,8 +167,8 @@ arbint_eq(arbint* a, arbint* b)
 	if (a->length != b->length)
 	{
 		// Find out which one is shorter and which one is longer
-		arbint* shorter;
-		arbint* longer;
+		arbint shorter;
+		arbint longer;
 
 		if (a->length < b->length)
 		{
@@ -221,7 +221,7 @@ arbint_eq(arbint* a, arbint* b)
 }
 
 void
-arbint_neg(arbint* to_negate)
+arbint_neg(arbint to_negate)
 {
 	if (to_negate->sign == POSITIVE)
 	{

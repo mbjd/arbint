@@ -28,4 +28,6 @@ typedef struct
 	uint32_t* value;
 	enum sign sign; // POSITIVE or NEGATIVE
 	size_t length;  // Number of uint32_t's in value
-} arbint;
+} arbint_struct;
+
+typedef arbint_struct* arbint;

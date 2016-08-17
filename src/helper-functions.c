@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -72,7 +73,7 @@ char_to_digit(char c, uint32_t base)
 }
 
 void
-arbint_set_zero(arbint* to_reset)
+arbint_set_zero(arbint to_reset)
 {
 	for (size_t i = 0; i < to_reset->length; i++)
 	{
@@ -92,11 +93,11 @@ addition_will_wrap(uint32_t a, uint32_t b)
 	return (a + b) < a;
 }
 
-arbint*
-arbint_copy(arbint* src)
+arbint
+arbint_copy(arbint src)
 {
 	// Allocate struct
-	arbint* dest = calloc(1, sizeof(arbint));
+	arbint dest = calloc(1, sizeof(arbint_struct));
 
 	// Copy the value over
 	size_t bytes_to_copy = src->length * sizeof(uint32_t);
@@ -104,6 +105,7 @@ arbint_copy(arbint* src)
 	if (dest_value == NULL)
 	{
 		fprintf(stderr, "arbint_copy: malloc returned null\n");
+		exit(ENOMEM);
 	}
 	else
 	{
@@ -120,7 +122,7 @@ arbint_copy(arbint* src)
 }
 
 size_t
-arbint_highest_digit(arbint* input)
+arbint_highest_digit(arbint input)
 {
 	// Returns the position of the most significant non-zero digit
 	size_t position = input->length - 1;
@@ -130,7 +132,7 @@ arbint_highest_digit(arbint* input)
 }
 
 void
-arbint_trim(arbint* to_trim)
+arbint_trim(arbint to_trim)
 {
 	// Remove all leading zeroes
 	size_t last_leading_zero = 1 + arbint_highest_digit(to_trim);
@@ -149,7 +151,7 @@ arbint_trim(arbint* to_trim)
 }
 
 void
-print_arbint(arbint* to_print)
+print_arbint(arbint to_print)
 {
 	// Print a representation of an arbint struct for debugging.
 

@@ -23,16 +23,13 @@ I'm happy to hear about suggestions, issues and ideas.
 
 ## Todo list
 
-- Remove confusion between `arbint` and `arbint*`
-	- Have a typedef to define the basic type as a pointer to the actual
-	  struct
 - Adding a negative number should result in subtraction
 - Put all 'public' functions and typedefs in a single header
 - Fix segfault in `arbint_eq` when one of the structs is uninitialised
 	- So structs are always 'initialised', but may contain random
 	  gibberish. So my solution is to always call arbint_init on each
 	  arbint right after creation.
-- Construct `arbint` structs from strings or integers
+- Construct `arbint_struct`s from strings or integers
 	- From strings: done with `str_to_arbint`, from ints is the easy part
 - Implement basic math functions with `arbint` structs and 'normal' numbers
 	- Done: Add u32 to arbint, add arbint to arbint, multiply arbint by u32
