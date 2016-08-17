@@ -118,13 +118,15 @@ test_str_to_arbint()
 	arbint a = arbint_new();
 	str_to_arbint("4294967296", a, 10);
 	mu_assert("str_to_arbint with UINT32_MAX failed",
-	          a->value[0] == 0 && a->value[1] == 1 && a->length == 2 && a->sign == POSITIVE);
+	          a->value[0] == 0 && a->value[1] == 1 && a->length == 2 &&
+	              a->sign == POSITIVE);
 
 	arbint_free_value(a);
 	arbint_init(a);
 	str_to_arbint("-4294967296", a, 10);
 	mu_assert("str_to_arbint with -UINT32_MAX failed",
-	          a->value[0] == 0 && a->value[1] == 1 && a->length == 2 && a->sign == NEGATIVE);
+	          a->value[0] == 0 && a->value[1] == 1 && a->length == 2 &&
+	              a->sign == NEGATIVE);
 
 	arbint_free_value(a);
 	arbint_init(a);
@@ -150,8 +152,9 @@ test_str_to_arbint()
 	              a, 2);
 	uint32_t x = 1431655765;
 	mu_assert("str_to_arbint with base 2 failed",
-	          a->length == 5 && a->value[0] == x && a->value[1] == x && a->value[2] == x &&
-	              a->value[3] == x && a->value[4] == 341 && a->sign == NEGATIVE);
+	          a->length == 5 && a->value[0] == x && a->value[1] == x &&
+	              a->value[2] == x && a->value[3] == x && a->value[4] == 341 &&
+	              a->sign == NEGATIVE);
 
 	arbint_free_value(a);
 	arbint_init(a);
@@ -173,24 +176,25 @@ test_str_to_arbint()
 static char*
 test_arbint_mul()
 {
-	arbint a = arbint_new_length(3);
+	arbint a    = arbint_new_length(3);
 	a->value[0] = 4294967295;
 	arbint_mul(a, 10);
 	mu_assert("arbint_mul by 10 failed",
 	          a->value[0] == 4294967286 && a->value[1] == 9 && a->value[2] == 0);
 	arbint_free(a);
 
-	arbint b = arbint_new_length(3);
+	arbint b    = arbint_new_length(3);
 	b->value[0] = 4294967295;
 	b->value[1] = 4294967295;
 	arbint_mul(b, 666);
-	mu_assert("arbint_mul by 666 failed",
-	          b->value[0] == 4294966630 && b->value[1] == 4294967295 && b->value[2] == 665);
+	mu_assert("arbint_mul by 666 failed", b->value[0] == 4294966630 &&
+	                                          b->value[1] == 4294967295 &&
+	                                          b->value[2] == 665);
 	arbint_free(b);
 
 	// This test should put the most significant digit close to overflowing,
 	// but should not allocate new space in c.value.
-	arbint c = arbint_new_length(3);
+	arbint c    = arbint_new_length(3);
 	c->value[0] = 4294967295;
 	c->value[1] = 4294967295;
 	arbint_mul(c, UINT32_MAX);
@@ -200,7 +204,7 @@ test_arbint_mul()
 	arbint_free(c);
 
 	// This test should reallocate c.value to fit the larger value
-	arbint d = arbint_new_length(3);
+	arbint d    = arbint_new_length(3);
 	d->value[2] = 4200000000;
 	arbint_mul(d, 1291);
 	mu_assert("arbint_mul by 1291 didn't reallocate correctly", d->length == 4);
@@ -303,8 +307,8 @@ test_arbint_copy()
 static char*
 test_arbint_add_positive()
 {
-	arbint a = arbint_new();
-	arbint b = arbint_new();
+	arbint a        = arbint_new();
+	arbint b        = arbint_new();
 	arbint expected = arbint_new();
 
 	str_to_arbint("100", a, 10);
@@ -374,9 +378,9 @@ test_arbint_to_hex()
 static char*
 test_highest_digit()
 {
-	arbint a = arbint_new_length(8);
-	a->length = 8;
-	a->sign = POSITIVE;
+	arbint a    = arbint_new_length(8);
+	a->length   = 8;
+	a->sign     = POSITIVE;
 	a->value[0] = 10;
 	a->value[4] = 10;
 	mu_assert("arbint_highest_digit failed (1)", arbint_highest_digit(a) == 4);
