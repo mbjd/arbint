@@ -105,7 +105,7 @@ arbint_eq_up_to_length(arbint a, arbint b, size_t length)
 	return true;
 }
 
-static bool
+bool
 arbint_is_zero(arbint a)
 {
 	size_t length = a->length;

@@ -85,16 +85,26 @@ void
 arbint_free_value(arbint to_free)
 {
 	free(to_free->value);
+	to_free->value = NULL;
 }
 
 void
-arbint_init(arbint new_arbint)
+arbint_reset(arbint to_reset)
 {
-	uint32_t* value_array = calloc(1, sizeof(uint32_t));
+	// Reallocate to 1 digit
+	size_t length = 1;
+	uint32_t* temp = realloc(to_reset->value, length * sizeof(uint32_t));
+	if (temp == NULL)
+	{
+		fprintf(stderr, "arbint_reset: realloc failed\n");
+		exit(ENOMEM);
+	}
 
-	new_arbint->value  = value_array;
-	new_arbint->length = 1;
-	new_arbint->sign   = POSITIVE;
+	// Set to 0
+	memset((void*) temp, 0, length * sizeof(uint32_t));
+	to_reset->value  = temp;
+	to_reset->length = length;
+	to_reset->sign   = POSITIVE;
 }
 
 arbint
@@ -119,6 +129,15 @@ arbint
 arbint_new_empty()
 {
 	return calloc(1, sizeof(arbint_struct));
+}
+
+void
+arbint_set_zero(arbint to_reset)
+{
+	for (size_t i = 0; i < to_reset->length; i++)
+	{
+		to_reset->value[i] = 0;
+	}
 }
 
 void

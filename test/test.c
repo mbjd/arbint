@@ -122,14 +122,14 @@ test_str_to_arbint()
 	              a->sign == POSITIVE);
 
 	arbint_free_value(a);
-	arbint_init(a);
+	arbint_reset(a);
 	str_to_arbint("-4294967296", a, 10);
 	mu_assert("str_to_arbint with -UINT32_MAX failed",
 	          a->value[0] == 0 && a->value[1] == 1 && a->length == 2 &&
 	              a->sign == NEGATIVE);
 
 	arbint_free_value(a);
-	arbint_init(a);
+	arbint_reset(a);
 	str_to_arbint("+792384103083241340432014773910347139419741", a, 10);
 	mu_assert("str_to_arbint with random huge value and leading + failed",
 	          a->value[0] == 313953885 && a->value[1] == 3019150336 &&
@@ -137,7 +137,7 @@ test_str_to_arbint()
 	              a->value[4] == 2328 && a->length == 5 && a->sign == POSITIVE);
 
 	arbint_free_value(a);
-	arbint_init(a);
+	arbint_reset(a);
 	str_to_arbint("-792384103083241340432014773910347139419741", a, 10);
 	mu_assert("str_to_arbint with -(random huge value) failed",
 	          a->value[0] == 313953885 && a->value[1] == 3019150336 &&
@@ -145,7 +145,7 @@ test_str_to_arbint()
 	              a->value[4] == 2328 && a->length == 5 && a->sign == NEGATIVE);
 
 	arbint_free_value(a);
-	arbint_init(a);
+	arbint_reset(a);
 	// 116149714575680328862165199336710216176981 in base 10
 	str_to_arbint("-010101010101010101010101010101010101010101010101010101010101010101010"
 	              "101010101010101010101010101010101010101010101010101010101010101010101",
@@ -157,7 +157,7 @@ test_str_to_arbint()
 	              a->sign == NEGATIVE);
 
 	arbint_free_value(a);
-	arbint_init(a);
+	arbint_reset(a);
 	str_to_arbint("2234437233536512670610467177347354552643414515707450555642435166545370"
 	              "737574172732620750174516443207",
 	              a, 8);
@@ -168,7 +168,7 @@ test_str_to_arbint()
 	              a->value[6] == 2138290989 && a->value[7] == 2915443310 &&
 	              a->value[8] == 2410081236 && a->value[9] == 1180);
 
-	arbint_free_value(a);
+	arbint_free(a);
 
 	return 0;
 }
@@ -221,8 +221,6 @@ test_str_mul_eq()
 	arbint b = arbint_new();
 	arbint c = arbint_new();
 
-	arbint_init(b);
-	arbint_init(c);
 	// Initialize so that c = 10 * b
 	str_to_arbint("999999999999999999999999", b, 10);
 	str_to_arbint("9999999999999999999999990", c, 10);
@@ -230,8 +228,8 @@ test_str_mul_eq()
 	arbint_mul(b, 10);
 	mu_assert("either arbint_eq or arbint_mul doesn't work (1)", arbint_eq(b, c));
 
-	arbint_init(b);
-	arbint_init(c);
+	arbint_reset(b);
+	arbint_reset(c);
 	// Initialize so that c = 10 * b
 	str_to_arbint("-77777777777777777777777777777777777777", b, 10);
 	str_to_arbint("-7777777777777777777777777777777777777700000000", c, 10);
@@ -255,8 +253,7 @@ test_u64_to_arbint()
 	                                          a->value[1] == 2123 && a->sign == POSITIVE);
 
 	// Test initialised
-	arbint b = arbint_new();
-	arbint_init(b);
+	arbint b = arbint_new_empty();
 	u64_to_arbint(9120311729134, b);
 	mu_assert("u64_to_arbint failed (2)", b->length == 2 && b->value[0] == 2096159726 &&
 	                                          b->value[1] == 2123 && b->sign == POSITIVE);
@@ -305,6 +302,22 @@ test_arbint_copy()
 }
 
 static char*
+test_set_zero_and_reset()
+{
+	arbint a = arbint_new();
+	str_to_arbint("7777777777777777777777", a, 10);
+	mu_assert("str_to_arbint in test_set_zero_and_reset failed", a->length == 3);
+
+	arbint_set_zero(a);
+	mu_assert("arbint_set_zero did not set arbint to zero", arbint_is_zero(a));
+
+	arbint_reset(a);
+	mu_assert("arbint_reset did not set length to 1", a->length == 1);
+
+	return 0;
+}
+
+static char*
 test_arbint_add_positive()
 {
 	arbint a        = arbint_new();
@@ -347,30 +360,27 @@ test_arbint_to_hex()
 	          !strcmp(*result, "C097CE7BC90715B34B9F0FFFFFFFFF"));
 	free(*result);
 
-	arbint_free_value(a);
-	arbint_init(a);
+	arbint_reset(a);
 	str_to_arbint("-999999999999999999999999999999999999", a, 10);
 	arbint_to_hex(a, result);
 	mu_assert("arbint_to_hex failed (-999...999)",
 	          !strcmp(*result, "-C097CE7BC90715B34B9F0FFFFFFFFF"));
 	free(*result);
 
-	arbint_free_value(a);
-	arbint_init(a);
+	arbint_reset(a);
 	str_to_arbint("DeaDBeEF", a, 16);
 	arbint_to_hex(a, result);
 	mu_assert("arbint_to_hex failed (0xDEADBEEF)", !strcmp(*result, "DEADBEEF"));
 	free(*result);
 
-	arbint_free_value(a);
-	arbint_init(a);
+	arbint_reset(a);
 	str_to_arbint("-deadbeefDEADBEEFdeadbeefDEADBEEF", a, 16);
 	arbint_to_hex(a, result);
 	mu_assert("arbint_to_hex failed (0xdeadbeefDEADBEEF...)",
 	          !strcmp(*result, "-DEADBEEFDEADBEEFDEADBEEFDEADBEEF"));
 	free(*result);
 
-	arbint_free_value(a);
+	arbint_free(a);
 	free(result);
 	return 0;
 }
@@ -404,16 +414,31 @@ test_trim()
 	arbint_trim(a);
 	mu_assert("arbint_trim failed to reduce length", a->length == 2);
 
-	arbint_free_value(a);
+	arbint_free(a);
 
 	return 0;
 }
 
 static char*
-test_arbint_new()
+test_init_functions()
 {
 	arbint a = arbint_new();
-	mu_assert("arbint_new returned NULL pointer", a != NULL);
+	mu_assert("arbint_new did not produce length 1", a->length == 1);
+	mu_assert("arbint_new did not produce value 0", arbint_is_zero(a));
+	mu_assert("arbint_new did not produce sign POSITIVE", a->sign == POSITIVE);
+	arbint_free(a);
+
+	arbint b = arbint_new_length(5);
+	mu_assert("arbint_new_length did not produce correct length", b->length == 5);
+	mu_assert("arbint_new_length did not produce value 0", arbint_is_zero(b));
+	mu_assert("arbint_new_length did not produce sign POSITIVE", b->sign == POSITIVE);
+	arbint_free(b);
+
+	arbint c = arbint_new_empty();
+	mu_assert("arbint_new_empty did not produce length 0", c->length == 0);
+	mu_assert("arbint_new_empty did not produce value NULL", c->value == NULL);
+	arbint_free(c);
+
 	return 0;
 }
 
@@ -428,7 +453,7 @@ all_tests()
 	mu_run_test(test_trim);
 
 	// Constructors/parsing
-	mu_run_test(test_arbint_new);
+	mu_run_test(test_init_functions);
 	mu_run_test(test_str_to_arbint);
 	mu_run_test(test_u64_to_arbint);
 
@@ -438,8 +463,9 @@ all_tests()
 	mu_run_test(test_str_mul_eq);
 	mu_run_test(test_arbint_add_positive);
 
-	// Copy
+	// Memory management etc.
 	mu_run_test(test_arbint_copy);
+	mu_run_test(test_set_zero_and_reset);
 
 	// Output
 	mu_run_test(test_arbint_to_hex);

@@ -72,15 +72,6 @@ char_to_digit(char c, uint32_t base)
 	return digit;
 }
 
-void
-arbint_set_zero(arbint to_reset)
-{
-	for (size_t i = 0; i < to_reset->length; i++)
-	{
-		to_reset->value[i] = 0;
-	}
-}
-
 bool
 is_digit(const char c)
 {
