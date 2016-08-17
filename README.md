@@ -23,6 +23,7 @@ I'm happy to hear about suggestions, issues and ideas.
 
 ## Todo list
 
+- Update `print_arbint` to reflect changes from c95dba8ed35300ee293227eb9bbfda841acff2e2
 - Adding a negative number should result in subtraction
 - Put all 'public' functions and typedefs in a single header
 - Fix segfault in `arbint_eq` when one of the structs is uninitialised
