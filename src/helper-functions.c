@@ -145,8 +145,6 @@ arbint_trim(arbint to_trim)
 void
 print_arbint(arbint to_print)
 {
-
-	// If it's a null pointer we don't have much to do
 	if (to_print == NULL)
 	{
 		printf("arbint a = NULL;\n");
@@ -154,12 +152,13 @@ print_arbint(arbint to_print)
 	}
 	else
 	{
-		printf("arbint a = arbint_new_empty();\n");
+		printf("arbint a = arbint_new();\n");
 
 		char** result = calloc(1, sizeof(char*));
 		arbint_to_hex(to_print, result);
 		printf("str_to_arbint(\"%s\", a, 16);\n", *result);
 		free(*result);
+		free(result);
 	}
 }
 
