@@ -10,7 +10,7 @@ lib_path := /usr/local/lib
 inc_path := /usr/local/include
 
 CC := gcc
-CFLAGS := -std=c99 -Wall -Wextra -pedantic -fpic -I $(include_dir)
+CFLAGS := -std=c99 -Wall -Wextra -pedantic -pipe -fpic -I $(include_dir)
 
 # List all .c files in the source directory
 SRCS := $(wildcard $(source_dir)/*.c)
