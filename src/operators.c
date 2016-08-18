@@ -277,6 +277,78 @@ arbint_eq(arbint a, arbint b)
 	}
 }
 
+int
+arbint_cmp(arbint a, arbint b)
+{
+	// Returns +1 if a > b, 0 if a == b, -1 if a < b
+
+	if (a == b)
+		return 0; // If it's the exact same pointer
+
+	bool a_is_zero = arbint_is_zero(a);
+	bool b_is_zero = arbint_is_zero(b);
+
+	if (a_is_zero && b_is_zero)
+		return 0;
+
+	if (a_is_zero)
+	{
+		if (b->sign == POSITIVE)
+			return -1;
+		else
+			return +1;
+	}
+
+	if (b_is_zero)
+	{
+		if (a->sign == POSITIVE)
+			return +1;
+		else
+			return -1;
+	}
+
+	// At this point we can be sure that none of the two arbints are 0
+	// This means that if signs are different the numbers are too
+	if (a->sign != b->sign)
+	{
+		if (a->sign == POSITIVE)
+			return +1;
+		else
+			return -1;
+	}
+
+	// Now the sign of the numbers is equal and they are both != 0.
+	// This means we need to actually check the value.
+	size_t a_highest_digit = arbint_highest_digit(a);
+	size_t b_highest_digit = arbint_highest_digit(b);
+
+	if (a_highest_digit > b_highest_digit)
+		return +1;
+	if (a_highest_digit < b_highest_digit)
+		return -1;
+
+	// Now we know that they both have the same amount of digits
+	// (ignoring leading zeroes)
+	assert(a_highest_digit == b_highest_digit);
+	size_t position = a_highest_digit;
+
+	// Find the highest digit that is different in both numbers
+	while (a->value[position] == b->value[position] && position)
+		position--;
+
+	if (a->value[position] > b->value[position])
+		return +1;
+	else if (a->value[position] < b->value[position])
+		return -1;
+	else
+	{
+		// In this case we must be at 0 because of the while loop
+		// above this
+		assert(position == 0);
+		return 0;
+	}
+}
+
 void
 arbint_neg(arbint to_negate)
 {

@@ -115,6 +115,45 @@ test_arbint_eq()
 }
 
 static char*
+test_comparison()
+{
+	// arbint_cmp(a, b): a > b -> +1, a == b -> 0, a < b -> -1
+	arbint a = arbint_new();
+	arbint b = arbint_new();
+
+	str_to_arbint("5000", a, 10);
+	str_to_arbint("5001", b, 10);
+
+	mu_assert("arbint_cmp(5000, 5001) != -1", arbint_cmp(a, b) == -1);
+	mu_assert("arbint_cmp(5001, 5000) != +1", arbint_cmp(b, a) == +1);
+
+	arbint_reset(b);
+
+	mu_assert("arbint_cmp(0, 5000) != -1", arbint_cmp(b, a) == -1);
+	mu_assert("arbint_cmp(5000, 0) != +1", arbint_cmp(a, b) == +1);
+
+	arbint_reset(a);
+
+	mu_assert("arbint_cmp(0, 0) != 0", arbint_cmp(a, b) == 0);
+
+	str_to_arbint("99999999999999999999999", a, 10);
+
+	mu_assert("arbint_cmp(999...999, 0) != +1", arbint_cmp(a, b) == +1);
+	mu_assert("arbint_cmp(0, 999...999) != -1", arbint_cmp(b, a) == -1);
+
+	str_to_arbint("-01413334130410576106307605713267149637", b, 10);
+
+	mu_assert("arbint_cmp(999...999, -141...637) != +1", arbint_cmp(a, b) == +1);
+	mu_assert("arbint_cmp(-141...637, 999...999) != -1", arbint_cmp(b, a) == -1);
+
+	mu_assert("arbint_cmp(x, x) != 0", !arbint_cmp(a, a) && !arbint_cmp(b, b));
+
+	arbint_free(a);
+	arbint_free(b);
+	return 0;
+}
+
+static char*
 test_str_to_arbint()
 {
 	arbint a = arbint_new();
@@ -373,7 +412,8 @@ test_arbint_sub_primitive()
 
 	arbint result = arbint_sub_primitive(a, b);
 
-	mu_assert("arbint_sub_primitive: result and expectation are same pointer", c != result);
+	mu_assert("arbint_sub_primitive: result and expectation are same pointer",
+	          c != result);
 	mu_assert("arbint_sub_primitive failed", arbint_eq(result, c));
 
 	arbint_free(a);
@@ -494,6 +534,7 @@ all_tests()
 
 	// Operators
 	mu_run_test(test_arbint_eq);
+	mu_run_test(test_comparison);
 	mu_run_test(test_arbint_mul);
 	mu_run_test(test_str_mul_eq);
 	mu_run_test(test_arbint_add_positive);

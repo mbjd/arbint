@@ -9,6 +9,12 @@
 // Returns false if different, true if equal
 bool arbint_eq(arbint a, arbint b);
 
+// Compares the value of two arbints
+// a > b -> +1
+// a == b -> 0
+// a < b -> -1
+int arbint_cmp(arbint a, arbint b);
+
 void arbint_neg(arbint to_negate);
 
 arbint arbint_add_positive(arbint a, arbint b);
