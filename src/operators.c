@@ -28,8 +28,9 @@ add_to_arbint(arbint to_add, uint32_t value, size_t position)
 	if (position >= to_add->length)
 	{
 		// Enough space so that position + the next digit will be in the array
-		size_t new_length   = position + 1;
-		uint32_t* new_value = realloc(to_add->value, new_length * sizeof(uint32_t));
+		size_t new_length = position + 1;
+		uint32_t* new_value =
+		    realloc(to_add->value, new_length * sizeof(uint32_t));
 		if (new_value == NULL)
 		{
 			fprintf(stderr, "add_to_arbint: failed to realloc\n");

@@ -7,31 +7,31 @@
  *  - Counts assertions too instead of tests only
  */
 
-#define mu_assert(message, test)            \
-	do                                      \
-	{                                       \
-		if (!(test))                        \
-		{                                   \
+#define mu_assert(message, test)                        \
+	do                                              \
+	{                                               \
+		if (!(test))                            \
+		{                                       \
 			return "Test failed: " message; \
-		}                                   \
-		else                                \
-		{                                   \
+		}                                       \
+		else                                    \
+		{                                       \
 			assertions_run++;               \
 			fputc('.', stdout);             \
-		}                                   \
+		}                                       \
 	} while (0)
 
-#define mu_run_test(test)        \
-	do                           \
-	{                            \
-		char* message = test();  \
-		printf(" ");             \
-		tests_run++;             \
-		if (message)             \
-		{                        \
+#define mu_run_test(test)                    \
+	do                                   \
+	{                                    \
+		char* message = test();      \
+		printf(" ");                 \
+		tests_run++;                 \
+		if (message)                 \
+		{                            \
 			fputc('\n', stdout); \
 			return message;      \
-		}                        \
+		}                            \
 	} while (0)
 
 extern int tests_run;

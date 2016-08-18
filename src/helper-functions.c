@@ -4,8 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "datatypes.h"
 #include "arbint.h"
+#include "datatypes.h"
 
 #include "helper-functions.h"
 
@@ -190,7 +190,5 @@ print_arbint_verbose(arbint to_print)
 				printf("%d; // invalid sign\n", to_print->sign);
 				break;
 		}
-
 	}
-
 }

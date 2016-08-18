@@ -40,7 +40,7 @@ arbint_mul(arbint to_mul, uint32_t multiplier)
 	for (size_t position = 0; position < to_mul->length; position++)
 	{
 		// Multiply using 64-bit ints to keep possible overflow
-		temp_result           = (uint64_t) to_mul->value[position] * multiplier_internal;
+		temp_result = (uint64_t) to_mul->value[position] * multiplier_internal;
 		mul_results[position] = temp_result;
 	}
 
@@ -92,7 +92,7 @@ void
 arbint_reset(arbint to_reset)
 {
 	// Reallocate to 1 digit
-	size_t length = 1;
+	size_t length  = 1;
 	uint32_t* temp = realloc(to_reset->value, length * sizeof(uint32_t));
 	if (temp == NULL)
 	{
@@ -182,7 +182,8 @@ str_to_arbint(char* input_str, arbint to_fill, uint32_t base)
 
 		if (digit_val == -1)
 		{
-			fprintf(stderr, "str_to_arbint: Invalid character '%c' for base %d",
+			fprintf(stderr,
+			        "str_to_arbint: Invalid character '%c' for base %d",
 			        input_str[position], base);
 			exit(EINVAL); // 22 Invalid argument
 		}
@@ -314,7 +315,8 @@ arbint_to_hex(arbint to_convert, char** to_fill)
 
 	// If there were leading zeroes, reallocate the string so that the
 	// space after the number isn't wasted
-	// TODO determine the amount of leading zeroes at the beginning and already allocate
+	// TODO determine the amount of leading zeroes at the beginning and already
+	// allocate
 	// no more bytes than necessary
 	if (str_pos < str_length)
 	{

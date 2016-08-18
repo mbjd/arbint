@@ -21,7 +21,6 @@ void str_to_arbint(char* input_str, arbint to_fill, uint32_t base);
 //  - The sign will always be positive
 void u64_to_arbint(uint64_t value, arbint to_fill);
 
-
 /* Initialisation functions */
 
 // Allocate an arbint
@@ -37,7 +36,6 @@ arbint arbint_new_length(size_t length);
 //  - Returns an arbint filled with zero bytes
 //    -> Its value is a NULL pointer and needs to be allocated manually before use!
 arbint arbint_new_empty();
-
 
 /* Reset functions */
 
@@ -56,7 +54,6 @@ void arbint_free(arbint to_free);
 
 // Deallocate the value of `to_free` and set its value to the null pointer.
 void arbint_free_value(arbint to_free);
-
 
 /* Operator functions */
 

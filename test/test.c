@@ -72,7 +72,8 @@ test_arbint_eq()
 	mu_assert("Completely equal arbints aren't equal", arbint_eq(a, b) == true);
 
 	a->value = test_array_c;
-	mu_assert("Different arbints with same length are equal", arbint_eq(a, b) == false);
+	mu_assert("Different arbints with same length are equal",
+	          arbint_eq(a, b) == false);
 
 	a->value  = test_array_d;
 	a->length = 2;
@@ -90,7 +91,8 @@ test_arbint_eq()
 	b->length = 1;
 	b->sign   = NEGATIVE;
 
-	mu_assert("Arbints = 0 with different sign aren't equal", arbint_eq(a, b) == true);
+	mu_assert("Arbints = 0 with different sign aren't equal",
+	          arbint_eq(a, b) == true);
 
 	a->value = one_array;
 	b->value = one_array;
@@ -147,9 +149,10 @@ test_str_to_arbint()
 	arbint_free_value(a);
 	arbint_reset(a);
 	// 116149714575680328862165199336710216176981 in base 10
-	str_to_arbint("-010101010101010101010101010101010101010101010101010101010101010101010"
-	              "101010101010101010101010101010101010101010101010101010101010101010101",
-	              a, 2);
+	str_to_arbint(
+	    "-010101010101010101010101010101010101010101010101010101010101010101010"
+	    "101010101010101010101010101010101010101010101010101010101010101010101",
+	    a, 2);
 	uint32_t x = 1431655765;
 	mu_assert("str_to_arbint with base 2 failed",
 	          a->length == 5 && a->value[0] == x && a->value[1] == x &&
@@ -158,15 +161,17 @@ test_str_to_arbint()
 
 	arbint_free_value(a);
 	arbint_reset(a);
-	str_to_arbint("2234437233536512670610467177347354552643414515707450555642435166545370"
-	              "737574172732620750174516443207",
-	              a, 8);
+	str_to_arbint(
+	    "2234437233536512670610467177347354552643414515707450555642435166545370"
+	    "737574172732620750174516443207",
+	    a, 8);
 	mu_assert("str_to_arbint with base 8 failed",
-	          a->length == 10 && a->value[0] == 3845801607 && a->value[1] == 1991384707 &&
-	              a->value[2] == 3820977213 && a->value[3] == 2745658155 &&
-	              a->value[4] == 2401810152 && a->value[5] == 1513645367 &&
-	              a->value[6] == 2138290989 && a->value[7] == 2915443310 &&
-	              a->value[8] == 2410081236 && a->value[9] == 1180);
+	          a->length == 10 && a->value[0] == 3845801607 &&
+	              a->value[1] == 1991384707 && a->value[2] == 3820977213 &&
+	              a->value[3] == 2745658155 && a->value[4] == 2401810152 &&
+	              a->value[5] == 1513645367 && a->value[6] == 2138290989 &&
+	              a->value[7] == 2915443310 && a->value[8] == 2410081236 &&
+	              a->value[9] == 1180);
 
 	arbint_free(a);
 
@@ -199,8 +204,9 @@ test_arbint_mul()
 	c->value[1] = 4294967295;
 	arbint_mul(c, UINT32_MAX);
 	mu_assert("arbint_mul by UINT32_MAX reallocated unnecessarily", c->length == 3);
-	mu_assert("arbint_mul by UINT32_MAX failed",
-	          c->value[0] == 1 && c->value[1] == 4294967295 && c->value[2] == 4294967294);
+	mu_assert("arbint_mul by UINT32_MAX failed", c->value[0] == 1 &&
+	                                                 c->value[1] == 4294967295 &&
+	                                                 c->value[2] == 4294967294);
 	arbint_free(c);
 
 	// This test should reallocate c.value to fit the larger value
@@ -249,14 +255,16 @@ test_u64_to_arbint()
 	// Test uninitialised
 	arbint a = arbint_new();
 	u64_to_arbint(9120311729134, a);
-	mu_assert("u64_to_arbint failed (1)", a->length == 2 && a->value[0] == 2096159726 &&
-	                                          a->value[1] == 2123 && a->sign == POSITIVE);
+	mu_assert("u64_to_arbint failed (1)",
+	          a->length == 2 && a->value[0] == 2096159726 && a->value[1] == 2123 &&
+	              a->sign == POSITIVE);
 
 	// Test initialised
 	arbint b = arbint_new_empty();
 	u64_to_arbint(9120311729134, b);
-	mu_assert("u64_to_arbint failed (2)", b->length == 2 && b->value[0] == 2096159726 &&
-	                                          b->value[1] == 2123 && b->sign == POSITIVE);
+	mu_assert("u64_to_arbint failed (2)",
+	          b->length == 2 && b->value[0] == 2096159726 && b->value[1] == 2123 &&
+	              b->sign == POSITIVE);
 
 	// Test with 2^32 - 1
 	arbint c = arbint_new();
@@ -267,8 +275,9 @@ test_u64_to_arbint()
 	// Test with 2^64 - 1
 	arbint d = arbint_new();
 	u64_to_arbint(UINT64_MAX, d);
-	mu_assert("u64_to_arbint with UINT64_MAX failed",
-	          d->length == 2 && d->value[0] == UINT32_MAX && d->value[1] == UINT32_MAX);
+	mu_assert("u64_to_arbint with UINT64_MAX failed", d->length == 2 &&
+	                                                      d->value[0] == UINT32_MAX &&
+	                                                      d->value[1] == UINT32_MAX);
 
 	arbint_free(a);
 	arbint_free(b);
@@ -330,7 +339,8 @@ test_arbint_add_positive()
 
 	arbint result = arbint_add_positive(a, b);
 
-	mu_assert("arbint_add doesn't work with short numbers", arbint_eq(expected, result));
+	mu_assert("arbint_add doesn't work with short numbers",
+	          arbint_eq(expected, result));
 	arbint_free(result);
 
 	str_to_arbint("222222222222222222222222222222222222", a, 10);
@@ -339,7 +349,8 @@ test_arbint_add_positive()
 
 	result = arbint_add_positive(a, b);
 
-	mu_assert("arbint_add doesn't work with long numbers", arbint_eq(expected, result));
+	mu_assert("arbint_add doesn't work with long numbers",
+	          arbint_eq(expected, result));
 
 	arbint_free(a);
 	arbint_free(b);
