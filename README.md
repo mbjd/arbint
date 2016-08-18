@@ -30,8 +30,6 @@ I'm happy to hear about suggestions, issues and ideas.
 	- So structs are always 'initialised', but may contain random
 	  gibberish. So my solution is to always call arbint_init on each
 	  arbint right after creation.
-- Construct `arbint_struct`s from strings or integers
-	- From strings: done with `str_to_arbint`, from ints is the easy part
 - Implement basic math functions with `arbint` structs and 'normal' numbers
 	- Done: Add u32 to arbint, add arbint to arbint, multiply arbint by u32
 - Return error codes if something goes wrong instead of printing a message
