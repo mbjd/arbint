@@ -22,3 +22,5 @@ size_t arbint_highest_digit(arbint input);
 void arbint_trim(arbint to_trim);
 
 void print_arbint(arbint to_print);
+
+void print_arbint_verbose(arbint to_print);

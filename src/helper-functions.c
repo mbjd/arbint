@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "datatypes.h"
+#include "arbint.h"
 
 #include "helper-functions.h"
 
@@ -144,7 +145,6 @@ arbint_trim(arbint to_trim)
 void
 print_arbint(arbint to_print)
 {
-	// Print a representation of an arbint struct for debugging.
 
 	// If it's a null pointer we don't have much to do
 	if (to_print == NULL)
@@ -152,33 +152,46 @@ print_arbint(arbint to_print)
 		printf("arbint a = NULL;\n");
 		return;
 	}
-
-	// First we declare the value array
-	printf("uint32_t value_array[%lu] = {", to_print->length);
-	for (size_t i = 0; i < (to_print->length); i++)
+	else
 	{
-		printf("%u%s", (to_print->value)[i], i + 1 == to_print->length ? "" : ", ");
+		printf("arbint a = arbint_new_empty();\n");
+
+		char** result = calloc(1, sizeof(char*));
+		arbint_to_hex(to_print, result);
+		printf("str_to_arbint(\"%s\", a, 16);\n", *result);
+		free(*result);
 	}
-	printf("};\n");
+}
 
-	// Print length & value
-	printf("arbint a = {\n");
-	printf("\t.value = value_array,\n");
-	printf("\t.length = %lu,\n", to_print->length);
-
-	// Print the sign
-	char* sign_fmt_str = "\t.sign = %s\n";
-	switch (to_print->sign)
+void
+print_arbint_verbose(arbint to_print)
+{
+	if (to_print == NULL)
 	{
-		case NEGATIVE:
-			printf(sign_fmt_str, "NEGATIVE");
-			break;
-		case POSITIVE:
-			printf(sign_fmt_str, "POSITIVE");
-			break;
-		default:
-			printf(sign_fmt_str, "< invalid >");
-			break;
+		printf("arbint a = NULL;\n");
+		return;
 	}
-	printf("};\n");
+	else
+	{
+		printf("arbint a = arbint_new_length(%lu);\n", to_print->length);
+		for (size_t i = 0; i < to_print->length; i++)
+		{
+			printf("a->value[%lu] = %u;\n", i, to_print->value[i]);
+		}
+		printf("a->sign = ");
+		switch (to_print->sign)
+		{
+			case POSITIVE:
+				puts("POSITIVE;");
+				break;
+			case NEGATIVE:
+				puts("NEGATIVE;");
+				break;
+			default:
+				printf("%d; // invalid sign\n", to_print->sign);
+				break;
+		}
+
+	}
+
 }
