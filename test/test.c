@@ -361,6 +361,30 @@ test_arbint_add_positive()
 }
 
 static char*
+test_arbint_sub_primitive()
+{
+	arbint a = arbint_new();
+	arbint b = arbint_new();
+	arbint c = arbint_new();
+
+	str_to_arbint("8888888888888888888888888888888888888888888", a, 10);
+	str_to_arbint("5555555555555555555555555555555555555555555", b, 10);
+	str_to_arbint("3333333333333333333333333333333333333333333", c, 10);
+
+	arbint result = arbint_sub_primitive(a, b);
+
+	mu_assert("arbint_sub_primitive: result and expectation are same pointer", c != result);
+	mu_assert("arbint_sub_primitive failed", arbint_eq(result, c));
+
+	arbint_free(a);
+	arbint_free(b);
+	arbint_free(c);
+	arbint_free(result);
+
+	return 0;
+}
+
+static char*
 test_arbint_to_hex()
 {
 	arbint a = arbint_new();
@@ -473,6 +497,7 @@ all_tests()
 	mu_run_test(test_arbint_mul);
 	mu_run_test(test_str_mul_eq);
 	mu_run_test(test_arbint_add_positive);
+	mu_run_test(test_arbint_sub_primitive);
 
 	// Memory management etc.
 	mu_run_test(test_arbint_copy);

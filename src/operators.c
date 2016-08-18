@@ -3,6 +3,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 
+#include "arbint.h"
 #include "datatypes.h"
 #include "debug.h"
 #include "helper-functions.h"
@@ -85,6 +86,61 @@ arbint_add_positive(arbint a, arbint b)
 	for (size_t i = 0; i < b->length; i++)
 	{
 		add_to_arbint(result, b->value[i], i);
+	}
+
+	return result;
+}
+
+arbint
+arbint_sub(arbint a, arbint b)
+{
+	// Not yet implemented (who would have thought)
+
+	// if a and b are positive:
+	// 	if a > b: return arbint_sub_primitive(a, b)
+	// 	if a < b: return -1 * arbint_sub_primitive(a, b)
+	// 	if a = b: return 0
+	// if a > 0 and b < 0:
+	// 	return arbint_add(a, -b)
+	// if a < 0 and b > 0:
+	// if both are negative:
+}
+
+arbint
+arbint_sub_primitive(arbint a, arbint b)
+{
+	// Return the result of a - b
+	// This assumes that both a and b are positive and that a >= b.
+	assert(a->sign == POSITIVE);
+	assert(b->sign == POSITIVE);
+
+	arbint result = arbint_new_length(a->length);
+
+	uint32_t digit_result;
+	uint32_t borrow = 0;
+
+	for (size_t i = 0; i < a->length; i++)
+	{
+		// Do the subtraction
+		digit_result = a->value[i] - b->value[i];
+
+		// Handle borrow from previous iteration
+		if (borrow)
+		{
+			digit_result -= borrow;
+			borrow = 0;
+		}
+
+		result->value[i] = digit_result;
+
+		// Detect wrapping
+		if (digit_result > a->value[i])
+		{
+			// Wrapped
+			// Keep the result anyway, but subtract one from
+			// the next higher digit (TODO check if correct)
+			borrow = 1;
+		}
 	}
 
 	return result;

@@ -17,7 +17,6 @@ I'm happy to hear about suggestions, issues and ideas.
  - Parse a string containing a decimal number, and convert it to an arbint
  - Multiply an arbint by a 32-bit integer
  - Add together two arbints (if their sign is positive)
- - Add a 32-bit unsigned int raised to an integer power of 2^(32) to an arbint
  - Test two arbint's for numerical equality
 
 
@@ -26,10 +25,6 @@ I'm happy to hear about suggestions, issues and ideas.
 - Update `print_arbint` to reflect changes from c95dba8ed35300ee293227eb9bbfda841acff2e2
 - Adding a negative number should result in subtraction
 - Put all 'public' functions and typedefs in a single header
-- Fix segfault in `arbint_eq` when one of the structs is uninitialised
-	- So structs are always 'initialised', but may contain random
-	  gibberish. So my solution is to always call arbint_init on each
-	  arbint right after creation.
 - Implement basic math functions with `arbint` structs and 'normal' numbers
 	- Done: Add u32 to arbint, add arbint to arbint, multiply arbint by u32
 - Return error codes if something goes wrong instead of printing a message
