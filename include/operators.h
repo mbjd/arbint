@@ -21,13 +21,16 @@ bool arbint_gt(arbint a, arbint b);  // a greater than b
 bool arbint_leq(arbint a, arbint b); // a less than or equal b
 bool arbint_geq(arbint a, arbint b); // a greater than or equal b
 
+// Reverses the sign of `to_negate`.
 void arbint_neg(arbint to_negate);
 
+// Adds two arbints together, assuming they're both positive.
 arbint arbint_add_positive(arbint a, arbint b);
 
+// Subtracts two arbints and returns the result in a newly allocated arbint
 arbint arbint_sub(arbint a, arbint b);
 
-// TODO don't export this after debugging
+// Subtracts two arbints, assuming both are positive and a > b
 arbint arbint_sub_primitive(arbint a, arbint b);
 
 void add_to_arbint(arbint to_add, uint32_t value, size_t position);

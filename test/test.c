@@ -122,31 +122,32 @@ test_comparison()
 	arbint b = arbint_new();
 
 	b->sign = NEGATIVE;
-
 	mu_assert("arbint_cmp(+0, -0) != 0", arbint_cmp(a, b) == 0);
 
 	str_to_arbint("5000", a, 10);
 	str_to_arbint("5001", b, 10);
-
 	mu_assert("arbint_cmp(5000, 5001) != -1", arbint_cmp(a, b) == -1);
 	mu_assert("arbint_cmp(5001, 5000) != +1", arbint_cmp(b, a) == +1);
 
-	arbint_reset(b);
+	arbint_neg(a);
+	arbint_neg(b);
+	mu_assert("arbint_cmp(-5000, -5001) != +1", arbint_cmp(a, b) == +1);
+	mu_assert("arbint_cmp(-5001, -5000) != -1", arbint_cmp(b, a) == -1);
+	arbint_neg(a);
+	arbint_neg(b);
 
+	arbint_reset(b);
 	mu_assert("arbint_cmp(0, 5000) != -1", arbint_cmp(b, a) == -1);
 	mu_assert("arbint_cmp(5000, 0) != +1", arbint_cmp(a, b) == +1);
 
 	arbint_reset(a);
-
 	mu_assert("arbint_cmp(0, 0) != 0", arbint_cmp(a, b) == 0);
 
 	str_to_arbint("99999999999999999999999", a, 10);
-
 	mu_assert("arbint_cmp(999...999, 0) != +1", arbint_cmp(a, b) == +1);
 	mu_assert("arbint_cmp(0, 999...999) != -1", arbint_cmp(b, a) == -1);
 
 	str_to_arbint("-01413334130410576106307605713267149637", b, 10);
-
 	mu_assert("arbint_cmp(999...999, -141...637) != +1", arbint_cmp(a, b) == +1);
 	mu_assert("arbint_cmp(-141...637, 999...999) != -1", arbint_cmp(b, a) == -1);
 
@@ -429,6 +430,83 @@ test_arbint_sub_primitive()
 }
 
 static char*
+test_arbint_sub()
+{
+	arbint a = arbint_new();
+	arbint b = arbint_new();
+	arbint c = arbint_new();
+
+	arbint result;
+
+	result = arbint_sub(a, b);
+	mu_assert("arbint_sub: 0 - 0 != 0", arbint_is_zero(result));
+	arbint_free(result);
+
+	b->sign = NEGATIVE;
+	result = arbint_sub(a, b);
+	mu_assert("arbint_sub: 0 - (-0) != 0", arbint_is_zero(result));
+	arbint_free(result);
+
+	result = arbint_sub(a, a);
+	mu_assert("arbint_sub: a - a != 0", arbint_is_zero(result));
+	arbint_free(result);
+
+	str_to_arbint("777777777777777777777777", a, 10);
+	str_to_arbint("333333333333333333333333", b, 10);
+	str_to_arbint("444444444444444444444444", c, 10);
+
+	result = arbint_sub(a, b);
+	mu_assert("arbint_sub: 77..77 - 33..33 != 44..44", arbint_eq(c, result));
+	arbint_free(result);
+
+	arbint_neg(c);
+	result = arbint_sub(b, a);
+	mu_assert("arbint_sub: 33..33 - 77..77 != -44..44", arbint_eq(c, result));
+	arbint_free(result);
+
+	str_to_arbint("4000000000000000000000", a, 10);
+	str_to_arbint("4000000000000000000000", b, 10);
+
+	result = arbint_sub(a, b);
+	mu_assert("arbint_sub: 40..00 - 40..00 != 0", arbint_is_zero(result));
+	arbint_free(result);
+
+	arbint_neg(b);
+	result = arbint_sub(a, b);
+	str_to_arbint("8000000000000000000000", c, 10);
+	mu_assert("arbint_sub: 40..00 - (-40..00) != +80..00", arbint_eq(c, result));
+	arbint_free(result);
+
+	arbint_neg(c);
+	result = arbint_sub(b, a);
+	mu_assert("arbint_sub: -40..00 - 40..00 != -80..00", arbint_eq(c, result));
+	arbint_free(result);
+
+	arbint_neg(a);
+	mu_assert("arbint_sub: test wrong", a->sign == NEGATIVE && b->sign == NEGATIVE);
+	result = arbint_sub(a, b);
+	mu_assert("arbint_sub: -40..00 - (-40..00) != 0", arbint_is_zero(result));
+	arbint_free(result);
+
+	str_to_arbint("-6000000000000000000000", a, 10);
+	str_to_arbint("-4000000000000000000000", b, 10);
+	str_to_arbint("-2000000000000000000000", c, 10);
+	result = arbint_sub(a, b);
+	mu_assert("arbint_sub: -60..00 - (-40..00) != -20..00", arbint_eq(result, c));
+	arbint_free(result);
+
+	arbint_neg(c);
+	result = arbint_sub(b, a);
+	mu_assert("arbint_sub: -40..00 - (-60..00) != 20..00", arbint_eq(result, c));
+	arbint_free(result);
+
+	arbint_free(a);
+	arbint_free(b);
+	arbint_free(c);
+	return 0;
+}
+
+static char*
 test_arbint_to_hex()
 {
 	arbint a = arbint_new();
@@ -543,6 +621,7 @@ all_tests()
 	mu_run_test(test_str_mul_eq);
 	mu_run_test(test_arbint_add_positive);
 	mu_run_test(test_arbint_sub_primitive);
+	mu_run_test(test_arbint_sub);
 
 	// Memory management etc.
 	mu_run_test(test_arbint_copy);

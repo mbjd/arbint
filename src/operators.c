@@ -68,12 +68,7 @@ add_to_arbint(arbint to_add, uint32_t value, size_t position)
 arbint
 arbint_add_positive(arbint a, arbint b)
 {
-	// TODO make a subtraction function and call it here if one of them is negative
-	if (a->sign == NEGATIVE || b->sign == NEGATIVE)
-	{
-		fprintf(stderr, "arbint_add_positive ignores the sign of numbers");
-		exit(22);
-	}
+	// This ignores the signs and assumes that both are positive!
 	if (a->length < b->length)
 	{
 		return arbint_add_positive(b, a);
@@ -94,16 +89,109 @@ arbint_add_positive(arbint a, arbint b)
 arbint
 arbint_sub(arbint a, arbint b)
 {
-	// Not yet implemented (who would have thought)
+	if (a == b)
+	{
+		return arbint_new();
+	}
 
+	bool a_is_zero = arbint_is_zero(a);
+	bool b_is_zero = arbint_is_zero(b);
+
+	if (a_is_zero && b_is_zero)
+	{
+		return arbint_new();
+	}
+	else if (a_is_zero)
+	{
+		// 0 - b = -b
+		arbint result = arbint_copy(b);
+		arbint_neg(result);
+		return result;
+	}
+	else if (b_is_zero)
+	{
+		// a - 0 = a
+		return arbint_copy(a);
+	}
+
+	int cmp = arbint_cmp(a, b);
+
+	if (cmp == 0)
+	{
+		return arbint_new();
+	}
+
+	if (a->sign == POSITIVE)
+	{
+		if (b->sign == POSITIVE)
+		{
+			// Both numbers are positive
+			if (cmp == +1)
+			{
+				// a > b, so the result is positive
+				return arbint_sub_primitive(a, b);
+			}
+			else // if (cmp == -1)
+			{
+				// a < b, so the result is negative
+				// a - b = c    | * -1
+				// b - a = -c   --> -c > 0
+				// So we need to calculate -(b - a) to get a - b
+				arbint result = arbint_sub_primitive(b, a);
+				result->sign  = NEGATIVE;
+				return result;
+			}
+		}
+		else // if (b->sign == NEGATIVE)
+		{
+			// a > 0, b < 0
+			// a - b = a + abs(b) if b < 0
+			return arbint_add_positive(a, b);
+		}
+	}
+	else // if (a->sign == NEGATIVE)
+	{
+		if (b->sign == POSITIVE)
+		{
+			// a < 0, b > 0
+			// a - b = -(-a + b)
+			arbint result = arbint_add_positive(a, b);
+			result->sign  = NEGATIVE;
+			return result;
+		}
+		else // if (b->sign == NEGATIVE)
+		{
+			// Both numbers are negative
+			if (cmp == +1)
+			{
+				// 0 > a > b
+				// -a - (-b) = c
+				// - (a - b) = c
+				// b - a = c
+				return arbint_sub_primitive(b, a);
+			}
+			else // if (cmp == -1)
+			{
+				// 0 > b > a
+				// -a - (-b) = c
+				// - (a - b) = c
+				arbint r = arbint_sub_primitive(a, b);
+				r->sign  = NEGATIVE;
+				return r;
+			}
+		}
+	}
 	// if a and b are positive:
 	// 	if a > b: return arbint_sub_primitive(a, b)
 	// 	if a < b: return -1 * arbint_sub_primitive(a, b)
 	// 	if a = b: return 0
+
 	// if a > 0 and b < 0:
 	// 	return arbint_add(a, -b)
 	// if a < 0 and b > 0:
+	// 	return -1 * arbint_add(-a, b)
 	// if both are negative:
+	//	- well shit it could pass zero
 }
 
 arbint
@@ -111,8 +199,8 @@ arbint_sub_primitive(arbint a, arbint b)
 {
 	// Return the result of a - b
 	// This assumes that both a and b are positive and that a >= b.
-	assert(a->sign == POSITIVE);
-	assert(b->sign == POSITIVE);
+	// assert(a->sign == POSITIVE);
+	// assert(b->sign == POSITIVE);
 
 	arbint result = arbint_new_length(a->length);
 
@@ -319,13 +407,25 @@ arbint_cmp(arbint a, arbint b)
 
 	// Now the sign of the numbers is equal and they are both != 0.
 	// This means we need to actually check the value.
+	assert(a->sign == b->sign);
 	size_t a_highest_digit = arbint_highest_digit(a);
 	size_t b_highest_digit = arbint_highest_digit(b);
 
+	// Instead of immeiately returning, we set this value and goto finish.
+	// There we need to reverse the result if the values are negative, because
+	// we want to compare a to b, not abs(a) to abs(b).
+	int retval;
+
 	if (a_highest_digit > b_highest_digit)
-		return +1;
+	{
+		retval = +1;
+		goto finish;
+	}
 	if (a_highest_digit < b_highest_digit)
-		return -1;
+	{
+		retval = -1;
+		goto finish;
+	}
 
 	// Now we know that they both have the same amount of digits
 	// (ignoring leading zeroes)
@@ -337,9 +437,15 @@ arbint_cmp(arbint a, arbint b)
 		position--;
 
 	if (a->value[position] > b->value[position])
-		return +1;
+	{
+		retval = +1;
+		goto finish;
+	}
 	else if (a->value[position] < b->value[position])
-		return -1;
+	{
+		retval = -1;
+		goto finish;
+	}
 	else
 	{
 		// In this case we must be at 0 because of the while loop
@@ -347,6 +453,15 @@ arbint_cmp(arbint a, arbint b)
 		assert(position == 0);
 		return 0;
 	}
+
+finish:
+	// If the numbers are both negative, the results are exactly opposite.
+	// Only check one sign because they're both equal anyway
+	if (a->sign == NEGATIVE)
+	{
+		retval *= -1;
+	}
+	return retval;
 }
 
 bool
@@ -376,7 +491,6 @@ arbint_geq(arbint a, arbint b)
 	// True if a >= b, false otherwise
 	return (arbint_cmp(a, b) != -1);
 }
-
 
 void
 arbint_neg(arbint to_negate)
