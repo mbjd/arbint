@@ -121,6 +121,10 @@ test_comparison()
 	arbint a = arbint_new();
 	arbint b = arbint_new();
 
+	b->sign = NEGATIVE;
+
+	mu_assert("arbint_cmp(+0, -0) != 0", arbint_cmp(a, b) == 0);
+
 	str_to_arbint("5000", a, 10);
 	str_to_arbint("5001", b, 10);
 
