@@ -349,6 +349,35 @@ arbint_cmp(arbint a, arbint b)
 	}
 }
 
+bool
+arbint_lt(arbint a, arbint b)
+{
+	// true if a < b, false otherwise
+	return (arbint_cmp(a, b) == -1);
+}
+
+bool
+arbint_gt(arbint a, arbint b)
+{
+	// True if a > b, false otherwise
+	return (arbint_cmp(a, b) == 1);
+}
+
+bool
+arbint_leq(arbint a, arbint b)
+{
+	// True if a <= b, false otherwise
+	return (arbint_cmp(a, b) != 1);
+}
+
+bool
+arbint_geq(arbint a, arbint b)
+{
+	// True if a >= b, false otherwise
+	return (arbint_cmp(a, b) != -1);
+}
+
+
 void
 arbint_neg(arbint to_negate)
 {

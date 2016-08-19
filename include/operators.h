@@ -15,6 +15,12 @@ bool arbint_eq(arbint a, arbint b);
 // a < b -> -1
 int arbint_cmp(arbint a, arbint b);
 
+// Other comparison functions
+bool arbint_lt(arbint a, arbint b); // a less than b
+bool arbint_gt(arbint a, arbint b); // a greater than b
+bool arbint_leq(arbint a, arbint b); // a less than or equal b
+bool arbint_geq(arbint a, arbint b); // a greater than or equal b
+
 void arbint_neg(arbint to_negate);
 
 arbint arbint_add_positive(arbint a, arbint b);
