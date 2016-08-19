@@ -17,16 +17,23 @@ I'm happy to hear about suggestions, issues and ideas.
  - Parse a string containing a decimal number, and convert it to an arbint
  - Multiply an arbint by a 32-bit integer
  - Add together two arbints (if their sign is positive)
+ - Subtract two arbints, regardless of sign and magnitude
  - Test two arbint's for numerical equality
 
 
 ## Todo list
 
-- Update `print_arbint` to reflect changes from c95dba8ed35300ee293227eb9bbfda841acff2e2
+- Have two sets of functions: One that is easy to use, that takes two
+  values and returns a pointer to the result, and another one that only
+  does the math and places the result in an already allocated buffer. This
+  would completely separate the actual math from memory management, and it
+  would encourage calculating the needed memory before the calculation
+  instead of reallocating during the calculation. This would also be
+  beneficial for running calculations in a loop, because you could allocate
+  the space before the loop and clean it up afterwards, instead of having the
+  math functions do that at every loop iteration.
 - Adding a negative number should result in subtraction
 - Put all 'public' functions and typedefs in a single header
-- Implement basic math functions with `arbint` structs and 'normal' numbers
-	- Done: Add u32 to arbint, add arbint to arbint, multiply arbint by u32
 - Return error codes if something goes wrong instead of printing a message
   to stderr and exiting
 
