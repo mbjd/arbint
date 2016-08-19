@@ -8,12 +8,15 @@
 
 /* Constructor functions */
 
-// Parse `input_str` in a given `base` and assign the numerical value to `to_fill`
+// Parse `input_str` in a given `base` and assign the numerical value to
+// `to_fill`
 //  - `base` can be between 2 and 36, inclusive
 //  - `input_str` can include a leading +/- sign
-//  - After that sign, `input_str` can only contain characters valid in the given `base`
+//  - After that sign, `input_str` can only contain characters valid in the
+//  given `base`
 //    '0'..'9' are interpreted as 0..9, 'A'..'Z' and 'a'..'z' as 10..35
-//  - to_fill->value is (re)allocated when it's not large enough or when it's NULL
+//  - to_fill->value is (re)allocated when it's not large enough or when it's
+//  NULL
 void str_to_arbint(char* input_str, arbint to_fill, uint32_t base);
 
 // Construct an arbint from an uint64_t
@@ -29,12 +32,14 @@ arbint arbint_new(void);
 
 // Allocate an arbint
 //  - Returns an arbint with value=0, length=`length`, sign=POSITIVE
-//    -> Useful if you know that it will hold a large value and want to avoid realloc's
+//    -> Useful if you know that it will hold a large value and want to avoid
+//    realloc's
 arbint arbint_new_length(size_t length);
 
 // Allocate an arbint
 //  - Returns an arbint filled with zero bytes
-//    -> Its value is a NULL pointer and needs to be allocated manually before use!
+//    -> Its value is a NULL pointer and needs to be allocated manually before
+//    use!
 arbint arbint_new_empty();
 
 /* Reset functions */
