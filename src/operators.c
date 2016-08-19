@@ -86,6 +86,44 @@ arbint_add_positive(arbint a, arbint b)
 	return result;
 }
 
+static arbint
+arbint_sub_primitive(arbint a, arbint b)
+{
+	// Return the result of a - b
+	// This assumes that both a and b are positive and that a >= b.
+
+	arbint result = arbint_new_length(a->length);
+
+	uint32_t digit_result;
+	uint32_t borrow = 0;
+
+	for (size_t i = 0; i < a->length; i++)
+	{
+		// Do the subtraction
+		digit_result = a->value[i] - b->value[i];
+
+		// Handle borrow from previous iteration
+		if (borrow)
+		{
+			digit_result -= borrow;
+			borrow = 0;
+		}
+
+		result->value[i] = digit_result;
+
+		// Detect wrapping
+		if (digit_result > a->value[i])
+		{
+			// Wrapped
+			// Keep the result anyway, but subtract one from
+			// the next higher digit (TODO check if correct)
+			borrow = 1;
+		}
+	}
+
+	return result;
+}
+
 arbint
 arbint_sub(arbint a, arbint b)
 {
@@ -194,45 +232,6 @@ arbint_sub(arbint a, arbint b)
 	//	- well shit it could pass zero
 }
 
-arbint
-arbint_sub_primitive(arbint a, arbint b)
-{
-	// Return the result of a - b
-	// This assumes that both a and b are positive and that a >= b.
-	// assert(a->sign == POSITIVE);
-	// assert(b->sign == POSITIVE);
-
-	arbint result = arbint_new_length(a->length);
-
-	uint32_t digit_result;
-	uint32_t borrow = 0;
-
-	for (size_t i = 0; i < a->length; i++)
-	{
-		// Do the subtraction
-		digit_result = a->value[i] - b->value[i];
-
-		// Handle borrow from previous iteration
-		if (borrow)
-		{
-			digit_result -= borrow;
-			borrow = 0;
-		}
-
-		result->value[i] = digit_result;
-
-		// Detect wrapping
-		if (digit_result > a->value[i])
-		{
-			// Wrapped
-			// Keep the result anyway, but subtract one from
-			// the next higher digit (TODO check if correct)
-			borrow = 1;
-		}
-	}
-
-	return result;
-}
 
 static bool
 arbint_eq_up_to_length(arbint a, arbint b, size_t length)
