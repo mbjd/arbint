@@ -66,12 +66,12 @@ add_to_arbint(arbint to_add, uint32_t value, size_t position)
 }
 
 arbint
-arbint_add_positive(arbint a, arbint b)
+arbint_add_primitive(arbint a, arbint b)
 {
 	// This ignores the signs and assumes that both are positive!
 	if (a->length < b->length)
 	{
-		return arbint_add_positive(b, a);
+		return arbint_add_primitive(b, a);
 	}
 
 	// If we copy the longer one and add the shorter one, adding will be faster
@@ -184,7 +184,7 @@ arbint_sub(arbint a, arbint b)
 		{
 			// a > 0, b < 0
 			// a - b = a + abs(b) if b < 0
-			return arbint_add_positive(a, b);
+			return arbint_add_primitive(a, b);
 		}
 	}
 	else // if (a->sign == NEGATIVE)
@@ -193,7 +193,7 @@ arbint_sub(arbint a, arbint b)
 		{
 			// a < 0, b > 0
 			// a - b = -(-a + b)
-			arbint result = arbint_add_positive(a, b);
+			arbint result = arbint_add_primitive(a, b);
 			result->sign  = NEGATIVE;
 			return result;
 		}

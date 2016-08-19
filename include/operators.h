@@ -25,7 +25,7 @@ bool arbint_geq(arbint a, arbint b); // a greater than or equal b
 void arbint_neg(arbint to_negate);
 
 // Adds two arbints together, assuming they're both positive.
-arbint arbint_add_positive(arbint a, arbint b);
+arbint arbint_add_primitive(arbint a, arbint b);
 
 // Subtracts two arbints and returns the result in a newly allocated arbint
 arbint arbint_sub(arbint a, arbint b);
