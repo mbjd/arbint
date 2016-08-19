@@ -23,6 +23,10 @@ I'm happy to hear about suggestions, issues and ideas.
 
 ## Todo list
 
+- Implement addition for the general case
+	- This shouldn't be too difficult since we already have subtraction
+	  in the general case, so anytime something with a - is passed into
+	  the add function, we should be able to use the subtract function
 - Have two sets of functions: One that is easy to use, that takes two
   values and returns a pointer to the result, and another one that only
   does the math and places the result in an already allocated buffer. This
@@ -32,7 +36,6 @@ I'm happy to hear about suggestions, issues and ideas.
   beneficial for running calculations in a loop, because you could allocate
   the space before the loop and clean it up afterwards, instead of having the
   math functions do that at every loop iteration.
-- Adding a negative number should result in subtraction
 - Put all 'public' functions and typedefs in a single header
 - Return error codes if something goes wrong instead of printing a message
   to stderr and exiting
