@@ -27,6 +27,9 @@ void arbint_neg(arbint to_negate);
 // Adds two arbints together, assuming they're both positive.
 arbint arbint_add_primitive(arbint a, arbint b);
 
+// Adds two arbints together and does subtraction if one is negative.
+arbint arbint_add(arbint a, arbint b);
+
 // Subtracts two arbints and returns the result in a newly allocated arbint
 arbint arbint_sub(arbint a, arbint b);
 
@@ -34,3 +37,4 @@ void add_to_arbint(arbint to_add, uint32_t value, size_t position);
 
 // Returns true if a == 0, false if not
 bool arbint_is_zero(arbint a);
+

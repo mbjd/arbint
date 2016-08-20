@@ -10,6 +10,11 @@
 
 #include "operators.h"
 
+// Forward declarations for internal functions
+static int arbint_cmp_with_sign(arbint a, arbint b, sign a_sign, sign b_sign);
+static arbint arbint_sub_with_sign(arbint a, arbint b, sign a_sign, sign b_sign);
+void add_to_arbint(arbint to_add, uint32_t value, size_t position);
+
 void
 add_to_arbint(arbint to_add, uint32_t value, size_t position)
 {
@@ -86,6 +91,51 @@ arbint_add_primitive(arbint a, arbint b)
 	return result;
 }
 
+arbint
+arbint_add(arbint a, arbint b)
+{
+	bool a_is_zero = arbint_is_zero(a);
+	bool b_is_zero = arbint_is_zero(b);
+
+	if (a_is_zero && b_is_zero)
+		return arbint_new();
+
+	if (a_is_zero)
+		return arbint_copy(b);
+	if (b_is_zero)
+		return arbint_copy(a);
+
+	if (a->sign == POSITIVE)
+	{
+		if (b->sign == POSITIVE)
+		{
+			// Both are positive -> we can just add
+			return arbint_add_primitive(a, b);
+		}
+		else // if (b->sign == NEGATIVE)
+		{
+			// This is a subtraction, let's return a - abs(b)
+			return arbint_sub_with_sign(a, b, POSITIVE, POSITIVE);
+		}
+	}
+	else // if (a->sign == NEGATIVE)
+	{
+		if (b->sign == POSITIVE)
+		{
+			// This is a subtraction, let's return b - abs(a)
+			return arbint_sub_with_sign(b, a, POSITIVE, POSITIVE);
+		}
+		else // if (b->sign == NEGATIVE)
+		{
+			// Both are negative! We can calculate abs(a) + abs(b) and then
+			// flip the sign
+			arbint result = arbint_add_primitive(a, b);
+			arbint_neg(result);
+			return result;
+		}
+	}
+}
+
 static arbint
 arbint_sub_primitive(arbint a, arbint b)
 {
@@ -125,7 +175,7 @@ arbint_sub_primitive(arbint a, arbint b)
 }
 
 arbint
-arbint_sub(arbint a, arbint b)
+arbint_sub_with_sign(arbint a, arbint b, sign a_sign, sign b_sign)
 {
 	if (a == b)
 	{
@@ -152,16 +202,16 @@ arbint_sub(arbint a, arbint b)
 		return arbint_copy(a);
 	}
 
-	int cmp = arbint_cmp(a, b);
+	int cmp = arbint_cmp_with_sign(a, b, a_sign, b_sign);
 
 	if (cmp == 0)
 	{
 		return arbint_new();
 	}
 
-	if (a->sign == POSITIVE)
+	if (a_sign == POSITIVE)
 	{
-		if (b->sign == POSITIVE)
+		if (b_sign == POSITIVE)
 		{
 			// Both numbers are positive
 			if (cmp == +1)
@@ -180,16 +230,16 @@ arbint_sub(arbint a, arbint b)
 				return result;
 			}
 		}
-		else // if (b->sign == NEGATIVE)
+		else // if (b_sign == NEGATIVE)
 		{
 			// a > 0, b < 0
 			// a - b = a + abs(b) if b < 0
 			return arbint_add_primitive(a, b);
 		}
 	}
-	else // if (a->sign == NEGATIVE)
+	else // if (a_sign == NEGATIVE)
 	{
-		if (b->sign == POSITIVE)
+		if (b_sign == POSITIVE)
 		{
 			// a < 0, b > 0
 			// a - b = -(-a + b)
@@ -219,19 +269,13 @@ arbint_sub(arbint a, arbint b)
 			}
 		}
 	}
-	// if a and b are positive:
-	// 	if a > b: return arbint_sub_primitive(a, b)
-	// 	if a < b: return -1 * arbint_sub_primitive(a, b)
-	// 	if a = b: return 0
-
-	// if a > 0 and b < 0:
-	// 	return arbint_add(a, -b)
-	// if a < 0 and b > 0:
-	// 	return -1 * arbint_add(-a, b)
-	// if both are negative:
-	//	- well shit it could pass zero
 }
 
+arbint
+arbint_sub(arbint a, arbint b)
+{
+	return arbint_sub_with_sign(a, b, a->sign, b->sign);
+}
 
 static bool
 arbint_eq_up_to_length(arbint a, arbint b, size_t length)
@@ -269,6 +313,9 @@ arbint_eq(arbint a, arbint b)
 	// Check two arbints for numerical equality
 	// Returns false if different, true if equal
 	// If one of the values is uninitialised, the comparison returns false.
+	// Could also be implemented as arbint_cmp(a, b) == 0 but that would be a
+	// bit less
+	// efficient since you'd have to check the whole number.
 
 	if (a == NULL || b == NULL)
 	{
@@ -330,19 +377,24 @@ arbint_eq(arbint a, arbint b)
 
 		assert(shorter_length < longer_length);
 
-		// See if we can already spot a difference in the 'digits' that are
+		// See if we can already spot a difference in the 'digits' that
+		// are
 		// present in both numbers.
 		bool tmp_result = arbint_eq_up_to_length(shorter, longer, shorter_length);
 
 		if (!tmp_result)
 		{
-			// If yes, we know that the numbers are different from each other
+			// If yes, we know that the numbers are different from
+			// each other
 			return false;
 		}
 
-		// Otherwise, we need to check the 'digits' that are only present in
-		// the longer number. If they are just zeroes, the numbers are indeed
-		// equal, otherwise not (because the non-existent values in the shorter
+		// Otherwise, we need to check the 'digits' that are only present
+		// in
+		// the longer number. If they are just zeroes, the numbers are
+		// indeed
+		// equal, otherwise not (because the non-existent values in the
+		// shorter
 		// arbint are implicitly zero)
 		for (size_t i = shorter_length; i < longer_length; i++)
 		{
@@ -352,7 +404,8 @@ arbint_eq(arbint a, arbint b)
 			}
 		}
 
-		// At this point we've checked all digits and they either match, or
+		// At this point we've checked all digits and they either match,
+		// or
 		// are zero in one number and don't exist in the other one.
 		return true;
 	}
@@ -364,10 +417,12 @@ arbint_eq(arbint a, arbint b)
 	}
 }
 
-int
-arbint_cmp(arbint a, arbint b)
+static int
+arbint_cmp_with_sign(arbint a, arbint b, sign a_sign, sign b_sign)
 {
 	// Returns +1 if a > b, 0 if a == b, -1 if a < b
+	// a_sign and b_sign override the actual signs a->sign and b->sign
+	// If you just want to use those signs, use arbint_cmp()
 
 	if (a == b)
 		return 0; // If it's the exact same pointer
@@ -380,7 +435,7 @@ arbint_cmp(arbint a, arbint b)
 
 	if (a_is_zero)
 	{
-		if (b->sign == POSITIVE)
+		if (b_sign == POSITIVE)
 			return -1;
 		else
 			return +1;
@@ -388,7 +443,7 @@ arbint_cmp(arbint a, arbint b)
 
 	if (b_is_zero)
 	{
-		if (a->sign == POSITIVE)
+		if (b_sign == POSITIVE)
 			return +1;
 		else
 			return -1;
@@ -396,9 +451,9 @@ arbint_cmp(arbint a, arbint b)
 
 	// At this point we can be sure that none of the two arbints are 0
 	// This means that if signs are different the numbers are too
-	if (a->sign != b->sign)
+	if (a_sign != b_sign)
 	{
-		if (a->sign == POSITIVE)
+		if (a_sign == POSITIVE)
 			return +1;
 		else
 			return -1;
@@ -406,7 +461,7 @@ arbint_cmp(arbint a, arbint b)
 
 	// Now the sign of the numbers is equal and they are both != 0.
 	// This means we need to actually check the value.
-	assert(a->sign == b->sign);
+	assert(a_sign == b_sign);
 	size_t a_highest_digit = arbint_highest_digit(a);
 	size_t b_highest_digit = arbint_highest_digit(b);
 
@@ -456,11 +511,17 @@ arbint_cmp(arbint a, arbint b)
 finish:
 	// If the numbers are both negative, the results are exactly opposite.
 	// Only check one sign because they're both equal anyway
-	if (a->sign == NEGATIVE)
+	if (a_sign == NEGATIVE)
 	{
 		retval *= -1;
 	}
 	return retval;
+}
+
+int
+arbint_cmp(arbint a, arbint b)
+{
+	return arbint_cmp_with_sign(a, b, a->sign, b->sign);
 }
 
 bool
@@ -495,15 +556,9 @@ void
 arbint_neg(arbint to_negate)
 {
 	if (to_negate->sign == POSITIVE)
-	{
 		to_negate->sign = NEGATIVE;
-	}
 	else if (to_negate->sign == NEGATIVE)
-	{
 		to_negate->sign = POSITIVE;
-	}
 	else
-	{
 		fprintf(stderr, "arbint_neg: Invalid sign");
-	}
 }

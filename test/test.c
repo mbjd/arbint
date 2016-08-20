@@ -371,7 +371,7 @@ test_set_zero_and_reset()
 }
 
 static char*
-test_arbint_add_primitive()
+test_arbint_add()
 {
 	arbint a        = arbint_new();
 	arbint b        = arbint_new();
@@ -381,9 +381,9 @@ test_arbint_add_primitive()
 	str_to_arbint("200", b, 10);
 	str_to_arbint("300", expected, 10);
 
-	arbint result = arbint_add_primitive(a, b);
+	arbint result = arbint_add(a, b);
 
-	mu_assert("arbint_add_primitive doesn't work with short numbers",
+	mu_assert("arbint_add doesn't work with short numbers",
 	          arbint_eq(expected, result));
 	arbint_free(result);
 
@@ -391,9 +391,9 @@ test_arbint_add_primitive()
 	str_to_arbint("444444444444444444444444444444444444", b, 10);
 	str_to_arbint("666666666666666666666666666666666666", expected, 10);
 
-	result = arbint_add_primitive(a, b);
+	result = arbint_add(a, b);
 
-	mu_assert("arbint_add_primitive doesn't work with long numbers",
+	mu_assert("arbint_add doesn't work with long numbers",
 	          arbint_eq(expected, result));
 
 	arbint_free(a);
@@ -418,7 +418,7 @@ test_arbint_sub()
 	arbint_free(result);
 
 	b->sign = NEGATIVE;
-	result = arbint_sub(a, b);
+	result  = arbint_sub(a, b);
 	mu_assert("arbint_sub: 0 - (-0) != 0", arbint_is_zero(result));
 	arbint_free(result);
 
@@ -594,7 +594,7 @@ all_tests()
 	mu_run_test(test_comparison);
 	mu_run_test(test_arbint_mul);
 	mu_run_test(test_str_mul_eq);
-	mu_run_test(test_arbint_add_primitive);
+	mu_run_test(test_arbint_add);
 	mu_run_test(test_arbint_sub);
 
 	// Memory management etc.
