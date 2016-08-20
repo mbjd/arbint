@@ -373,33 +373,55 @@ test_set_zero_and_reset()
 static char*
 test_arbint_add()
 {
-	arbint a        = arbint_new();
-	arbint b        = arbint_new();
-	arbint expected = arbint_new();
+	arbint a = arbint_new();
+	arbint b = arbint_new();
+	arbint c = arbint_new();
 
 	str_to_arbint("100", a, 10);
 	str_to_arbint("200", b, 10);
-	str_to_arbint("300", expected, 10);
+	str_to_arbint("300", c, 10);
 
 	arbint result = arbint_add(a, b);
 
-	mu_assert("arbint_add doesn't work with short numbers",
-	          arbint_eq(expected, result));
+	mu_assert("arbint_add doesn't work with short numbers", arbint_eq(c, result));
 	arbint_free(result);
 
 	str_to_arbint("222222222222222222222222222222222222", a, 10);
 	str_to_arbint("444444444444444444444444444444444444", b, 10);
-	str_to_arbint("666666666666666666666666666666666666", expected, 10);
+	str_to_arbint("666666666666666666666666666666666666", c, 10);
+	result = arbint_add(a, b);
+	mu_assert("arbint_add doesn't work with long numbers", arbint_eq(c, result));
+	arbint_free(result);
+
+	str_to_arbint("8888888888888888888888888888888888888", a, 10);
+	str_to_arbint("-3333333333333333333333333333333333333", b, 10);
+	str_to_arbint("5555555555555555555555555555555555555", c, 10);
+	result = arbint_add(a, b);
+	mu_assert("arbint_add: 8.. + (-3..) != 5..", arbint_eq(result, c));
+	arbint_free(result);
+	result = arbint_add(b, a);
+	mu_assert("arbint_add: (-3..) + 8.. != 5..", arbint_eq(result, c));
+	arbint_free(result);
+
+	arbint_neg(a);
+	arbint_neg(b);
+	arbint_neg(c);
 
 	result = arbint_add(a, b);
+	mu_assert("arbint_add: (-8..) + 3.. != -5..", arbint_eq(result, c));
+	arbint_free(result);
+	result = arbint_add(b, a);
+	mu_assert("arbint_add: 3.. + (-8..) != -5..", arbint_eq(result, c));
+	arbint_free(result);
 
-	mu_assert("arbint_add doesn't work with long numbers",
-	          arbint_eq(expected, result));
+	b->sign = NEGATIVE;
+	result = arbint_add(b, c);
+	mu_assert("arbint_add: (-3..) + (-5..) != -(8..)", arbint_eq(result, a));
+	arbint_free(result);
 
 	arbint_free(a);
 	arbint_free(b);
-	arbint_free(expected);
-	arbint_free(result);
+	arbint_free(c);
 
 	return 0;
 }
