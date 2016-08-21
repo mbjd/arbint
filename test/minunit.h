@@ -7,6 +7,7 @@
  *  - Counts assertions too instead of tests only
  */
 
+// Assert with user-defined message
 #define mu_assert(message, test)                        \
 	do                                              \
 	{                                               \
@@ -19,6 +20,21 @@
 			assertions_run++;               \
 			fputc('.', stdout);             \
 		}                                       \
+	} while (0)
+
+// Assert with auto generated message
+#define mu_assert_nm(test)                                                 \
+	do                                                                 \
+	{                                                                  \
+		if (!(test))                                               \
+		{                                                          \
+			return "Test failed: \"" #test "\" not satisfied"; \
+		}                                                          \
+		else                                                       \
+		{                                                          \
+			assertions_run++;                                  \
+			fputc('.', stdout);                                \
+		}                                                          \
 	} while (0)
 
 #define mu_run_test(test)                    \

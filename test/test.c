@@ -14,39 +14,30 @@ int assertions_run = 0;
 static char*
 test_char_to_digit()
 {
-	mu_assert("char_to_digit('0', 10) != 0", char_to_digit('0', 10) == 0);
-	mu_assert("char_to_digit('9', 10) != 9", char_to_digit('9', 10) == 9);
-	mu_assert("char_to_digit('*', 10) != -1", char_to_digit('*', 10) == -1);
-	mu_assert("char_to_digit('a', 10) != -1", char_to_digit('a', 10) == -1);
-	mu_assert("char_to_digit('\\0', 10) != -1", char_to_digit('\0', 10) == -1);
-	mu_assert("char_to_digit('a', 11) != 10", char_to_digit('a', 11) == 10);
-	mu_assert("char_to_digit('z', 36) != 35", char_to_digit('z', 36) == 35);
-	mu_assert("char_to_digit('Z', 36) != 35", char_to_digit('Z', 36) == 35);
-
+	mu_assert_nm(char_to_digit('0', 10) == 0);
+	mu_assert_nm(char_to_digit('9', 10) == 9);
+	mu_assert_nm(char_to_digit('*', 10) == -1);
+	mu_assert_nm(char_to_digit('a', 10) == -1);
+	mu_assert_nm(char_to_digit('\0', 10) == -1);
+	mu_assert_nm(char_to_digit('a', 11) == 10);
+	mu_assert_nm(char_to_digit('z', 36) == 35);
+	mu_assert_nm(char_to_digit('Z', 36) == 35);
 	return 0;
 }
 
 static char*
 test_sign_to_int()
 {
-	int neg = sign_to_int(NEGATIVE);
-	int pos = sign_to_int(POSITIVE);
-
-	mu_assert("NEGATIVE != -1", neg == -1);
-	mu_assert("POSITIVE != 1", pos == 1);
-
+	mu_assert_nm(sign_to_int(NEGATIVE) == -1);
+	mu_assert_nm(sign_to_int(POSITIVE) == +1);
 	return 0;
 }
 
 static char*
 test_int_to_sign()
 {
-	sign neg = int_to_sign(-1);
-	sign pos = int_to_sign(1);
-
-	mu_assert("-1 != NEGATIVE", neg == NEGATIVE);
-	mu_assert("+1 != POSITIVE", pos == POSITIVE);
-
+	mu_assert_nm(int_to_sign(+1) == POSITIVE);
+	mu_assert_nm(int_to_sign(-1) == NEGATIVE);
 	return 0;
 }
 
@@ -261,6 +252,7 @@ test_arbint_mul()
 	mu_assert("arbint_mul by 1291 failed", d->value[0] == 0 && d->value[1] == 0 &&
 	                                           d->value[2] == 1951272448 &&
 	                                           d->value[3] == 1262);
+	arbint_free(d);
 
 	return 0;
 }
