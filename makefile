@@ -69,8 +69,8 @@ uninstall: $(so_name)
 # Format all .c and .h files
 .PHONY: pretty
 pretty:
-	@find . -name '*.c' -exec clang-format -i {} \;
-	@find . -name '*.h' -exec clang-format -i {} \;
+	@find . -name '*.c' -print0 | xargs -0 -n1 -P8 clang-format -i
+	@find . -name '*.h' -print0 | xargs -0 -n1 -P8 clang-format -i
 	@echo Formatted all .c and .h files with clang-format
 
 # Calculate sha256 of all source code files
