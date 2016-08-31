@@ -40,7 +40,7 @@ arbint_mul(arbint to_mul, uint32_t multiplier)
 	for (size_t position = 0; position < to_mul->length; position++)
 	{
 		// Multiply using 64-bit ints to keep possible overflow
-		temp_result = (uint64_t) to_mul->value[position] * multiplier_internal;
+		temp_result           = (uint64_t) to_mul->value[position] * multiplier_internal;
 		mul_results[position] = temp_result;
 	}
 
@@ -182,8 +182,7 @@ str_to_arbint(char* input_str, arbint to_fill, uint32_t base)
 
 		if (digit_val == -1)
 		{
-			fprintf(stderr,
-			        "str_to_arbint: Invalid character '%c' for base %d",
+			fprintf(stderr, "str_to_arbint: Invalid character '%c' for base %d",
 			        input_str[position], base);
 			exit(EINVAL); // 22 Invalid argument
 		}

@@ -37,4 +37,3 @@ void add_to_arbint(arbint to_add, uint32_t value, size_t position);
 
 // Returns true if a == 0, false if not
 bool arbint_is_zero(arbint a);
-

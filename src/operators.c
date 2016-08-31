@@ -34,9 +34,8 @@ add_to_arbint(arbint to_add, uint32_t value, size_t position)
 	if (position >= to_add->length)
 	{
 		// Enough space so that position + the next digit will be in the array
-		size_t new_length = position + 1;
-		uint32_t* new_value =
-		    realloc(to_add->value, new_length * sizeof(uint32_t));
+		size_t new_length   = position + 1;
+		uint32_t* new_value = realloc(to_add->value, new_length * sizeof(uint32_t));
 		if (new_value == NULL)
 		{
 			fprintf(stderr, "add_to_arbint: failed to realloc\n");
@@ -83,7 +82,7 @@ arbint_add_primitive(arbint a, arbint b)
 	// If we copy the longer one and add the shorter one, adding will be faster
 	// and it's less likely that we have to reallocate while adding
 	arbint result = arbint_copy(a);
-	result->sign = POSITIVE;
+	result->sign  = POSITIVE;
 
 	for (size_t i = 0; i < b->length; i++)
 	{
