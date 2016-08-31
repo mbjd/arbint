@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <errno.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdlib.h>
@@ -39,7 +40,7 @@ add_to_arbint(arbint to_add, uint32_t value, size_t position)
 		if (new_value == NULL)
 		{
 			fprintf(stderr, "add_to_arbint: failed to realloc\n");
-			exit(12); // ENOMEM cannot allocate memory
+			exit(ENOMEM);
 		}
 
 		// Set the newly allocated space to zero
@@ -321,7 +322,7 @@ arbint_eq(arbint a, arbint b)
 	if (a == NULL || b == NULL)
 	{
 		fprintf(stderr, "arbint_eq: Got null pointer as argument");
-		exit(14); // EFAULT bad address
+		exit(EFAULT);
 	}
 
 	if (a->value == NULL || b->value == NULL)

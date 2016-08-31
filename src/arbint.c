@@ -146,12 +146,12 @@ str_to_arbint(char* input_str, arbint to_fill, uint32_t base)
 	if (base < 2)
 	{
 		fprintf(stderr, "str_to_arbint: Base must be between 2 and 36\n");
-		exit(22);
+		exit(EINVAL);
 	}
 	else if (base > 36)
 	{
 		fprintf(stderr, "str_to_arbint: Base must be between 2 and 36\n");
-		exit(22);
+		exit(EINVAL);
 	}
 	// TODO: Trim whitespace
 

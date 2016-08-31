@@ -22,7 +22,7 @@ sign_to_int(sign enum_sign)
 			break;
 		default:
 			fprintf(stderr, "Error converting sign (enum to number)\n");
-			exit(1);
+			exit(EINVAL);
 	}
 }
 
@@ -39,7 +39,7 @@ int_to_sign(int int_sign)
 			break;
 		default:
 			fprintf(stderr, "Error converting sign (int to enum)\n");
-			exit(1);
+			exit(EINVAL);
 	}
 }
 
@@ -138,7 +138,7 @@ arbint_trim(arbint to_trim)
 	else
 	{
 		fprintf(stderr, "Failed to realloc in arbint_trim\n");
-		exit(12);
+		exit(ENOMEM);
 	}
 }
 
