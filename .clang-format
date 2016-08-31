@@ -5,25 +5,34 @@ Language: Cpp
 
 SortIncludes: true
 
+# Opening braces on new line, line break between function type and name
 BreakBeforeBraces: Allman
 AlwaysBreakAfterDefinitionReturnType: true
 
+# char* a; instead of char *a because the type is char* and not char, and the name is a
+# and not *a
 DerivePointerAlignment: false
 PointerAlignment: Left
 
+# Horizontal alignment
+AlignOperands: true
 AlignTrailingComments: true
 AlignConsecutiveAssignments: true
+
 ReflowComments: true
 
-AlignOperands: true
 BinPackArguments: true
 BinPackParameters: true
+
 SpaceAfterCStyleCast: true
 AlignEscapedNewlinesLeft: true
 
+# On my screen, a half-width terminal is 103 cols so 90 is still small enough
 ColumnLimit: 90
 
+# Only way to use tabs and spaces
 UseTab: ForIndentation
 TabWidth: 4
 IndentWidth: 4
+
 IndentCaseLabels: true
