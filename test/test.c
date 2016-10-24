@@ -248,6 +248,20 @@ test_arbint_mul()
 	                                           d->value[3] == 1262);
 	arbint_free(d);
 
+	// Test multiplication by 1
+	arbint e = arbint_new();
+	arbint f = arbint_new();
+
+	str_to_arbint("717171717171717171717", e, 10);
+	str_to_arbint("717171717171717171717", f, 10);
+
+	mu_assert("arbint_eq doesn't work in arbint_mul test", arbint_eq(e, f));
+
+	arbint_mul(f, 1);
+
+	mu_assert("arbint_mul by 1 doesn't return the same value", arbint_eq(e, f));
+
+
 	return 0;
 }
 
