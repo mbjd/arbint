@@ -103,9 +103,13 @@ arbint_add(arbint a, arbint b)
 		return arbint_new();
 
 	if (a_is_zero)
+	{
 		return arbint_copy(b);
+	}
 	if (b_is_zero)
+	{
 		return arbint_copy(a);
+	}
 
 	if (a->sign == POSITIVE)
 	{
