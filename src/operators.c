@@ -93,6 +93,10 @@ arbint_add_primitive(arbint a, arbint b)
 	return result;
 }
 
+/*
+ * General addition procedure that takes into account the signs
+ * and calls the actual addition/subtraction procedure based on that.
+ */
 arbint
 arbint_add(arbint a, arbint b)
 {
@@ -142,12 +146,14 @@ arbint_add(arbint a, arbint b)
 	}
 }
 
+/*
+ * Return the result of a - b.
+ * This assumes that both a and b are positive (signs are ignored),
+ * and that a >= b.
+ */
 static arbint
 arbint_sub_primitive(arbint a, arbint b)
 {
-	// Return the result of a - b
-	// This assumes that both a and b are positive and that a >= b.
-
 	arbint result = arbint_new_length(a->length);
 
 	uint32_t digit_result;
@@ -180,6 +186,10 @@ arbint_sub_primitive(arbint a, arbint b)
 	return result;
 }
 
+/*
+ * General subtraction procedure. Takes into account the signs and
+ * calls the appropriate addition/subtraction procedures.
+ */
 arbint
 arbint_sub_with_sign(arbint a, arbint b, sign a_sign, sign b_sign)
 {
@@ -277,18 +287,23 @@ arbint_sub_with_sign(arbint a, arbint b, sign a_sign, sign b_sign)
 	}
 }
 
+/*
+ * User-facing subtraction routine that works for all sign combinations
+ */
 arbint
 arbint_sub(arbint a, arbint b)
 {
 	return arbint_sub_with_sign(a, b, a->sign, b->sign);
 }
 
+/*
+ * This function assumes that both a and b have at least the given length.
+ * It is intended to be called from arbint_eq, which does the necessary
+ * checking.
+ */
 static bool
 arbint_eq_up_to_length(arbint a, arbint b, size_t length)
 {
-	// This function assumes that both a and b have at least the given length.
-	// It is intended to be called from arbint_eq, which does the necessary
-	// checking.
 	for (size_t i = 0; i < length; i++)
 	{
 		if (a->value[i] != b->value[i])
@@ -299,6 +314,9 @@ arbint_eq_up_to_length(arbint a, arbint b, size_t length)
 	return true;
 }
 
+/*
+ * Checks if an arbint is numerically equal to 0
+ */
 bool
 arbint_is_zero(arbint a)
 {
@@ -313,15 +331,12 @@ arbint_is_zero(arbint a)
 	return true;
 }
 
-bool
-arbint_eq(arbint a, arbint b)
-{
-	// Check two arbints for numerical equality
-	// Returns false if different, true if equal
-	// If one of the values is uninitialised, the comparison returns false.
-	// Could also be implemented as arbint_cmp(a, b) == 0 but that would be a
-	// bit less
-	// efficient since you'd have to check the whole number.
+/*
+ * Check two arbints for numerical equality
+ * Returns false if different, true if equal
+ * If either one of the values is uninitialised, the comparison returns false.
+ */
+bool arbint_eq(arbint a, arbint b) {
 
 	if (a == NULL || b == NULL)
 	{
@@ -331,6 +346,7 @@ arbint_eq(arbint a, arbint b)
 
 	if (a->value == NULL || b->value == NULL)
 	{
+		// TODO think about making this an error
 		return false;
 	}
 
@@ -396,12 +412,9 @@ arbint_eq(arbint a, arbint b)
 		}
 
 		// Otherwise, we need to check the 'digits' that are only present
-		// in
-		// the longer number. If they are just zeroes, the numbers are
-		// indeed
-		// equal, otherwise not (because the non-existent values in the
-		// shorter
-		// arbint are implicitly zero)
+		// in the longer number. If they are just zeroes, the numbers are
+		// indeed equal, otherwise not (because the non-existent values in the
+		// shorter arbint are implicitly zero)
 		for (size_t i = shorter_length; i < longer_length; i++)
 		{
 			if (longer->value[i])
